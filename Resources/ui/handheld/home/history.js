@@ -1,9 +1,12 @@
 function historyWindow(){
 	
-	var calendarTableData = [];
+	var migrainesTableData = [];
 	var migraineDetailsWindow = require('/ui/handheld/home/migraineDetails');
 	var fontFamilyVar = 'Source Sans Pro';
 	var fontSizeVar ='16';
+	var migraine;
+	var userid = Ti.App.Properties.getString('userid');
+	var domain = Ti.App.Properties.getString('domain');
 	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
@@ -113,14 +116,52 @@ function historyWindow(){
 
 	var daysToSubtract = 280;
 	var j = 0;
-	for (var i=0; i<20; i++) {
-		var weekRow = Ti.UI.createTableViewRow({
+	
+	function createRow(json,i){
+		
+		migraine = json.MIGRAINE[i];
+		
+		var row = Ti.UI.createTableViewRow({
 			width:Ti.UI.FILL,
 			height:93,
 			title:'',
 			top:0,
 			layout:'horizontal'
 		});
+		
+		var calendarView = Ti.UI.createView({
+			width:69,
+			height:69,
+			backgroundColor:'#FFF',
+			borderRadius:2,
+			left:8,
+			right:8
+		});
+		
+		var dayString = Ti.UI.createLabel({
+			text:migraine.DAYOFWEEK,
+			width:Ti.UI.SIZE,
+			color:'red',
+			font:{
+				fontSize:14,
+		    	fontFamily:fontFamilyVar
+		  	},
+		  	top:4
+		});
+		
+		var dayNumber = Ti.UI.createLabel({
+			text:migraine.DAYNUMBER,
+			width:Ti.UI.SIZE,
+			color:'#595959',
+			font:{
+				fontSize:46,
+		    	fontFamily:fontFamilyVar
+		  	},
+		  	top:10
+		});
+		
+		calendarView.add(dayString);
+		calendarView.add(dayNumber);
 		
 		var dayColumn = Ti.UI.createView({
 			width:Ti.UI.FILL,
@@ -132,15 +173,17 @@ function historyWindow(){
 			borderColor:'#00BFFF'
 		});
 		
-		weekRow.add(dayColumn);
+		row.add(dayColumn);
 		
-		if(j==0){
+		dayColumn.add(calendarView);
+		
+		if(migraine.SEVERITY==1){
 			var circleColor = '#0F0';
 		}
-		else if(j==1){
+		else if(migraine.SEVERITY==2){
 			var circleColor = '#FF0';
 		}
-		else if(j==2){
+		else if(migraine.SEVERITY==3){
 			var circleColor = '#FF8300';
 		}
 		else{
@@ -148,15 +191,17 @@ function historyWindow(){
 		}
 		
 		var colorOverlay = Ti.UI.createView({
-			width:(j+1)*25+'%',
+			width:(migraine.SEVERITY)*25+'%',
 			height:20,
+			top:5,
 			bottom:0,
+			right:0,
 			left:0,
 			backgroundColor:circleColor
 		});
 		
 		var severityString = Ti.UI.createLabel({
-			text:j+1,
+			text:migraine.SEVERITY+' / 4',
 			width:Ti.UI.SIZE,
 			color:'#595959',
 			font:{
@@ -167,48 +212,42 @@ function historyWindow(){
 		
 		colorOverlay.add(severityString);
 		
-		if(j > 2){
-			j = 0;
-		}
-		else{
-			j++;
-		}
-		
-		dayColumn.add(colorOverlay);
+		//dayColumn.add(colorOverlay);
 		
 		var datesColumn = Ti.UI.createView({
-			width:Ti.UI.SIZE,
+			width:Ti.UI.FILL,
 			height:Ti.UI.SIZE,
 			top:0,
-			left:0,
+			left:85,
+			right:8,
 			layout:'vertical'
 		});
 		
 		var dayString = Ti.UI.createLabel({
-			text:'Jun 10, 2014 4:10pm',
+			text:migraine.STARTDATETIME,
 			color:'#FFF',
 			font:{
 				fontSize:fontSizeVar,
 		    	fontFamily:fontFamilyVar
 		   },
-		   top:8,
-		   left:8
+		   top:4,
+		   left:0
 		});
 		
 		var durationString = Ti.UI.createLabel({
-			text:'2hrs 20min',
+			text:migraine.DURATION,
 			color:'#FFF',
 			font:{
 				fontSize:fontSizeVar,
 		    	fontFamily:fontFamilyVar
 		   },
-		   top:8,
-		   left:8
+		   top:4,
+		   left:0
 		});
 		
 		datesColumn.add(dayString);
 		datesColumn.add(durationString);
-		
+		datesColumn.add(colorOverlay);
 		dayColumn.add(datesColumn);
 		
 		dayColumn.addEventListener('click', function() {
@@ -216,7 +255,7 @@ function historyWindow(){
 			callMigraineDetailsWindow.open({modal:true});
 		});
 		
-		calendarTableData.push(weekRow);
+		return row;
 	}
 	
 	var calendarTable = Ti.UI.createTableView({
@@ -227,7 +266,7 @@ function historyWindow(){
 		top:8,
 		right:8,
 		left:8,
-		data:calendarTableData,
+		data:migrainesTableData,
 		selectionStyle:'NONE',
 		separatorStyle: Titanium.UI.iPhone.TableViewSeparatorStyle.NONE,
     	separatorColor: '#FFF',
@@ -241,6 +280,41 @@ function historyWindow(){
 	});
 	
 	self.add(calendarTable);
+	
+	function loadMigraines(){
+		var loadURL = "http://"+domain+"/model/mobile/services/migraines.cfc?method=getMigraines";
+		var loadData = {
+			userid: userid
+		};
+		
+		var xhr = Ti.Network.createHTTPClient({
+	    	onload: function() {
+	    		
+	    		var migrainesTableData = [];
+	    		var json = JSON.parse(this.responseText);
+	    		
+	    		for (i = 0; i < json.MIGRAINE.length; i++) {
+		    		migrainesTableData.push(createRow(json,i));    
+		    	}
+
+				calendarTable.setData(migrainesTableData);
+	    	},
+	    	onerror: function(e) {
+	    		Ti.API.info("STATUS: " + this.status);
+		    	Ti.API.info("TEXT:   " + this.responseText);
+		    	Ti.API.info("ERROR:  " + e.error);
+
+		    	alert('error');
+	    	},
+	    	timeout:5000
+	    });
+	    xhr.open("GET", loadURL);
+		xhr.send(loadData);	
+	}	
+	
+	self.addEventListener('focus', function(e) {
+		loadMigraines();
+	});
 	
 	return self;
 	

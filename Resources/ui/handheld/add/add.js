@@ -11,7 +11,9 @@ function addForm(_args){
     var fontFamilyVar = 'Source Sans Pro';
     var fontSizeVar ='16';
     var tabbar = _args.tabbar;
-
+	var userid = Ti.App.Properties.getString('userid');
+	var domain = Ti.App.Properties.getString('domain');
+	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
 			text:'Migraine',
@@ -50,6 +52,61 @@ function addForm(_args){
 	});
 	
 	self.setRightNavButton(saveButton);
+	
+	saveButton.addEventListener('click', function(e) {
+		
+		var saveURL = "http://"+domain+"/model/mobile/services/migraines.cfc?method=addMigraine";
+		var saveData = {
+		    userid: userid,
+		    startdatetime: startDateField.value,
+		    enddatetime: endDateField.value,
+		    severity: 1,
+		    locationid: 1,
+		    triggerid:1,
+		    w_city: cityField.value,
+			w_condition: conditionField.value,
+			w_temperature: tempField.value,
+			w_humidity: humidityField.value,
+			w_pressure: pressureField.value
+		};
+
+		var xhr = Ti.Network.createHTTPClient({
+			enableKeepAlive:false,
+	    	onload: function() {
+				var json = JSON.parse(this.responseText);
+				var migraine = json.MIGRAINEINFO[0];
+				var	migraineid = migraine.ID;
+				
+				addTableData = [];
+				weatherTableData = [];
+				populateAddTable();
+				//startDateTimePickerView.animate(slideUp);
+				
+				if(Titanium.Network.networkType == Titanium.Network.NETWORK_NONE){
+					var alertDialog = Ti.UI.createAlertDialog({
+						title:'WARNING!',
+						message:'Your device is not online.',
+						buttonNames:['OK']
+					});
+					alertDialog.show();
+				}
+				else{
+					loadWeatherData();
+				}	
+	    	},
+	    	onerror: function(e) {
+	    		alert("STATUS: " + this.status);
+		    	alert("TEXT:   " + this.responseText);
+		    	alert("ERROR:  " + e.error);
+	    	},
+	    	timeout:999999
+	    });
+	    //xhr.setRequestHeader("ContentType", "image/jpeg");
+		//xhr.setRequestHeader("enctype","multipart/form-data");
+	    xhr.open("GET", saveURL);
+		xhr.send(saveData);
+		
+	});
 	
 	var slideLoadingDown = Ti.UI.createAnimation({
 		top:0,

@@ -3,6 +3,8 @@ function settingsForm(){
 	var settingsTableData = [];
 	var fontFamilyVar = 'Source Sans Pro';
 	var fontSizeVar ='16';
+	var userid = Ti.App.Properties.getString('userid');
+	var domain = Ti.App.Properties.getString('domain');
 	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
@@ -15,8 +17,21 @@ function settingsForm(){
 		}),
 		fullscreen:false,
 		navBarHidden:false,
-		backgroundColor:'#F5F5F5'
+		backgroundColor:'#d7d6d5'
 	}));
+	
+	var mainContainerView = Ti.UI.createScrollView({
+	  	width:Ti.UI.FILL,
+	  	height:Ti.UI.FILL,
+	  	top:0,
+	  	layout:'vertical',
+	  	contentWidth: 'auto',
+  		contentHeight: 'auto',
+  		showVerticalScrollIndicator: true,
+  		showHorizontalScrollIndicator: false
+	});
+
+	self.add(mainContainerView);
 	
 	var dobPickerView = Titanium.UI.createView({
 		width:Ti.UI.FILL,
@@ -127,8 +142,6 @@ function settingsForm(){
 	var photoView = Ti.UI.createView({
 		width:62,
 		height:82,
-		borderColor:'#CCC',
-		borderWidth:1,
 		borderRadius:2,
 		left:8,
 		top:8,
@@ -579,16 +592,116 @@ function settingsForm(){
 		width:Ti.UI.FILL,
 		height:Ti.UI.SIZE,
 		data:settingsTableData,
-   		top:0,
-		right:0,
-		left:0,
-		bottom:0,
+   		top:8,
+		right:8,
+		left:8,
+		bottom:8,
+		borderWidth:1,
+		borderColor:'#CCC',
+		borderRadius:2,
 		selectionStyle:'NONE',
 		backgroundColor: '#FFF'
 	});
 	
-	self.add(settingsTable);
+	mainContainerView.add(settingsTable);
+	
+	function loadSettings(){
+		var loadURL = "http://"+domain+"/model/mobile/services/users.cfc?method=getUser";
+		var loadData = {
+			userid: userid
+		};
+		
+		var xhr = Ti.Network.createHTTPClient({
+	    	onload: function() {
+	    		
+				var json = JSON.parse(this.responseText);
+				var settings = json.SETTINGS[0];
+				var	userid = settings.USERID;	
+				var emailaddress = settings.EMAILADDRESS;
+				var password = settings.PASSWORD;
+				var firstname = settings.FIRSTNAME;
+				var lastname = settings.LASTNAME;
+				var gender = settings.GENDER;
+				var dateofbirth = settings.DATEOFBIRTH;
+				var country = settings.COUNTRY;
+				var zipcode = settings.ZIPCODE;
+				var timezone = settings.TIMEZONE;
+				
+				emailField.value = emailaddress;
+				passwordField.value = password;
+				firstNameField.value = firstname;
+				lastNameField.value = lastname;
+				genderField.value = gender;
+				dobField.value = dateofbirth;
+				countryField.value = country;
+				zipField.value = zipcode;
+				timezoneField.value = timezone;
+				
+			},
+	    	onerror: function(e) {
+	    		Ti.API.info("STATUS: " + this.status);
+		    	Ti.API.info("TEXT:   " + this.responseText);
+		    	Ti.API.info("ERROR:  " + e.error);
 
+		    	alert( L('error_retrieving_remote_data') );
+	    	},
+	    	timeout:5000
+	    });
+	    xhr.open("GET", loadURL);
+		xhr.send(loadData);	
+	}	
+	
+	self.addEventListener('focus', function(e) {
+		loadSettings();
+	});
+	
+	var saveButton = Titanium.UI.createButton({
+		title:'Save',
+		color:'#FFF',
+		backgroundImage: 'none',
+		font:{
+			fontSize:18,
+			fontFamily:fontFamilyVar
+		}
+	});
+	
+	self.setRightNavButton(saveButton);
+	
+	saveButton.addEventListener('click', function(e) {
+		
+		var saveURL = "http://"+domain+"/model/mobile/services/users.cfc?method=editUser";
+		var saveData = {
+		    userid: userid,
+		    emailaddress: emailField.value,
+		    password: passwordField.value,
+		    firstname: firstNameField.value,
+		    lastname: lastNameField.value,
+		    gender:genderField.value,
+		    dateofbirth: dobField.value,
+			country: countryField.value,
+			zipcode: zipField.value,
+			timezone: timezoneField.value
+		};
+
+		var xhr = Ti.Network.createHTTPClient({
+			enableKeepAlive:false,
+	    	onload: function() {
+
+	    	},
+	    	onerror: function(e) {
+	    		alert("STATUS: " + this.status);
+		    	alert("TEXT:   " + this.responseText);
+		    	alert("ERROR:  " + e.error);
+	    	},
+	    	timeout:999999
+	    });
+	    //xhr.setRequestHeader("ContentType", "image/jpeg");
+		//xhr.setRequestHeader("enctype","multipart/form-data");
+	    xhr.open("GET", saveURL);
+		xhr.send(saveData);
+		
+	});
+	
 	return self;
 };
 

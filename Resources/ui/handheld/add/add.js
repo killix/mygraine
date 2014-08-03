@@ -14,7 +14,7 @@ function addForm(_args){
 
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
-			text:'Add Migraine',
+			text:'Migraine',
 			color:'#FFF',
 			font:{
 				fontSize:18,
@@ -387,8 +387,17 @@ function addForm(_args){
 		var row = Ti.UI.createTableViewRow({
 			title:'',
 			hasChild:false,
-			backgroundColor:'#FFF'
+			backgroundColor:'#FFF',
+			layout:'vertical'
 		});
+		
+		var fieldLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
+		    text: 'Severity',
+		    left: 15,
+		    height:34
+		}));
+		
+		row.add(fieldLabel);
 		
 		var rowView = Ti.UI.createView({
 			width:Ti.UI.SIZE,

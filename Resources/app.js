@@ -18,8 +18,8 @@ if (Ti.version < 1.8) {
 var ef = {};
 
 Ti.App.Properties.setString("userid","0");
-Ti.App.Properties.setString("domain","");
-	
+Ti.App.Properties.setString("domain","www.sportsuniformsunlimited.com/Mygraine");
+Ti.App.Properties.setString("userid","1");
 // This is a single context application with mutliple windows in a stack
 (function() {
 

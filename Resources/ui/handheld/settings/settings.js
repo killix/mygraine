@@ -1,10 +1,12 @@
-function settingsForm(){
+function settingsForm(_args){
 	
 	var settingsTableData = [];
 	var fontFamilyVar = 'Source Sans Pro';
 	var fontSizeVar ='16';
 	var userid = Ti.App.Properties.getString('userid');
 	var domain = Ti.App.Properties.getString('domain');
+	var loadingWindow = require('/ui/handheld/loadingWindow');
+	var tabbar = _args.tabbar;
 	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
@@ -611,6 +613,9 @@ function settingsForm(){
 			userid: userid
 		};
 		
+		var	callLoadingWindow = new loadingWindow();
+			callLoadingWindow.open();
+			
 		var xhr = Ti.Network.createHTTPClient({
 	    	onload: function() {
 	    		
@@ -637,13 +642,15 @@ function settingsForm(){
 				zipField.value = zipcode;
 				timezoneField.value = timezone;
 				
+				callLoadingWindow.close();
+				
 			},
 	    	onerror: function(e) {
 	    		Ti.API.info("STATUS: " + this.status);
 		    	Ti.API.info("TEXT:   " + this.responseText);
 		    	Ti.API.info("ERROR:  " + e.error);
-
-		    	alert( L('error_retrieving_remote_data') );
+				callLoadingWindow.close();
+		    	alert('error');
 	    	},
 	    	timeout:5000
 	    });
@@ -651,8 +658,10 @@ function settingsForm(){
 		xhr.send(loadData);	
 	}	
 	
-	self.addEventListener('focus', function(e) {
-		loadSettings();
+	tabbar.addEventListener('focus', function(e) {
+		if(e.index == 2){
+			loadSettings();
+		}
 	});
 	
 	var saveButton = Titanium.UI.createButton({

@@ -7,6 +7,7 @@ function historyWindow(){
 	var migraine;
 	var userid = Ti.App.Properties.getString('userid');
 	var domain = Ti.App.Properties.getString('domain');
+	var loadingWindow = require('/ui/handheld/loadingWindow');
 	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
@@ -225,7 +226,7 @@ function historyWindow(){
 		
 		var dayString = Ti.UI.createLabel({
 			text:migraine.STARTDATETIME,
-			color:'#FFF',
+			color:'#595959',
 			font:{
 				fontSize:fontSizeVar,
 		    	fontFamily:fontFamilyVar
@@ -236,7 +237,7 @@ function historyWindow(){
 		
 		var durationString = Ti.UI.createLabel({
 			text:migraine.DURATION,
-			color:'#FFF',
+			color:'#595959',
 			font:{
 				fontSize:fontSizeVar,
 		    	fontFamily:fontFamilyVar
@@ -287,6 +288,9 @@ function historyWindow(){
 			userid: userid
 		};
 		
+		var	callLoadingWindow = new loadingWindow();
+			callLoadingWindow.open();
+			
 		var xhr = Ti.Network.createHTTPClient({
 	    	onload: function() {
 	    		
@@ -298,12 +302,14 @@ function historyWindow(){
 		    	}
 
 				calendarTable.setData(migrainesTableData);
+				
+				callLoadingWindow.close();
 	    	},
 	    	onerror: function(e) {
 	    		Ti.API.info("STATUS: " + this.status);
 		    	Ti.API.info("TEXT:   " + this.responseText);
 		    	Ti.API.info("ERROR:  " + e.error);
-
+				callLoadingWindow.close();
 		    	alert('error');
 	    	},
 	    	timeout:5000
@@ -312,7 +318,7 @@ function historyWindow(){
 		xhr.send(loadData);	
 	}	
 	
-	self.addEventListener('focus', function(e) {
+	self.addEventListener('open', function(e) {
 		loadMigraines();
 	});
 	

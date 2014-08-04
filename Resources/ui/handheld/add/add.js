@@ -13,6 +13,7 @@ function addForm(_args){
     var tabbar = _args.tabbar;
 	var userid = Ti.App.Properties.getString('userid');
 	var domain = Ti.App.Properties.getString('domain');
+	var loadingWindow = require('/ui/handheld/loadingWindow');
 	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
@@ -69,7 +70,10 @@ function addForm(_args){
 			w_humidity: humidityField.value,
 			w_pressure: pressureField.value
 		};
-
+		
+		var	callLoadingWindow = new loadingWindow();
+			callLoadingWindow.open();
+			
 		var xhr = Ti.Network.createHTTPClient({
 			enableKeepAlive:false,
 	    	onload: function() {
@@ -93,11 +97,21 @@ function addForm(_args){
 				else{
 					loadWeatherData();
 				}	
+				
+				tabbar.setActiveTab(0);
+				
+				var historyWindow = require('/ui/handheld/home/history');
+				var callHistoryWindow = new historyWindow();
+				tabbar.activeTab.open(callHistoryWindow);
+				
+				callLoadingWindow.close();
 	    	},
 	    	onerror: function(e) {
 	    		alert("STATUS: " + this.status);
 		    	alert("TEXT:   " + this.responseText);
 		    	alert("ERROR:  " + e.error);
+		    	
+		    	callLoadingWindow.close();
 	    	},
 	    	timeout:999999
 	    });

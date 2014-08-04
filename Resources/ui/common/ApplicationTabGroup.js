@@ -16,7 +16,7 @@ function ApplicationTabGroup(Window) {
 	//create app tabs
 	var win1 = new homeWindow(),
 		win2 = new addWindow({tabbar:self}),
-		win3 = new settingsWindow();
+		win3 = new settingsWindow({tabbar:self});
 
 	var tab1 = Ti.UI.createTab({
 		title: L('home'),

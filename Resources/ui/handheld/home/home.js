@@ -18,7 +18,6 @@ function homeForm(){
 		}),
 		fullscreen:false,
 		navBarHidden:false,
-		layout:'vertical',
 		tintColor:'#FFF',
 		backgroundColor:'#d7d6d5'
 	}));
@@ -88,16 +87,70 @@ function homeForm(){
 	
 	var profileRow = Ti.UI.createTableViewRow({
 		width:Ti.UI.FILL,
-		height:98,
+		height:160,
 		title:'',
 		top:8,
+		backgroundColor:'transparent'
+	});
+	
+	var topView = Ti.UI.createView({
+		width:Ti.UI.FILL,
+		height:40,
+		top:0,
+		layout:'vertical',
+		backgroundColor:'transparent'
+	});
+	
+	var tabView = Ti.UI.createView({
+		left:16,
+		top:8,
+		width:Ti.UI.SIZE,
+		height:50,
+		backgroundColor:'white',
+		borderRadius:2,
+		layout:'vertical',
+		borderWidth:1,
+		borderColor:'#CCC',
+		borderRadius:2
+	});
+	
+	var nameLabel = Ti.UI.createLabel({
+		text: 'Jim Villa',
+	    left:8,
+	    right:8,
+	    top:2,
+	    font:{
+	    	fontSize:22,
+	    	fontFamily:fontFamilyVar
+	    },
+	    color:'#595959',
+	    width:Ti.UI.SIZE,
+	    height:Ti.UI.SIZE
+	});
+	
+	tabView.add(nameLabel);
+	
+	topView.add(tabView);
+	
+	var bottomView = Ti.UI.createView({
+		width:Ti.UI.FILL,
+		height:Ti.UI.FILL,
 		layout:'horizontal',
+		top:39,
+		right:8,
+		left:8,
+		borderWidth:1,
+		borderColor:'#CCC',
+		borderRadius:2,
 		backgroundColor:'#FFF'
 	});
 	
+	profileRow.add(bottomView);
+	profileRow.add(topView);
+	
 	var photoImageView = Ti.UI.createImageView({
-		width:62,
-		height:82,
+		width:Ti.UI.SIZE,
+		height:104,
 		borderRadius:2,
 		left:8,
 		top:8,
@@ -107,28 +160,16 @@ function homeForm(){
 		image:'/images/photo.JPG'
 	});
 	
-	profileRow.add(photoImageView);
+	bottomView.add(photoImageView);
 	
 	var profileInfoView = Ti.UI.createView({
 		width:Ti.UI.FILL,
-		height:98,
-		top:4,
+		height:160,
+		top:8,
 		bottom:8,
 		right:8,
 		layout:'vertical'
 	});
-	
-	var nameLabel = Ti.UI.createLabel({
-		text: 'Jim Villa',
-	    left: 0,
-	    font:{
-	    	fontSize:fontSizeVar,
-	    	fontFamily:fontFamilyVar
-	    },
-	    color:'#595959'
-	});
-	
-	profileInfoView.add(nameLabel);
 	
 	var daysSinceView = Ti.UI.createView({
 		width:Ti.UI.SIZE,
@@ -178,7 +219,7 @@ function homeForm(){
 		width:Ti.UI.SIZE,
 		height:Ti.UI.SIZE,
 		left:0,
-		top:4,
+		top:6,
 		layout:'horizontal'
 	});
 	
@@ -219,7 +260,52 @@ function homeForm(){
 	
 	profileInfoView.add(totalMigrainesView);
 	
-	profileRow.add(profileInfoView);
+	var alertsView = Ti.UI.createView({
+		width:Ti.UI.SIZE,
+		height:Ti.UI.SIZE,
+		left:0,
+		top:6,
+		layout:'horizontal'
+	});
+	
+	var alertsNumberCircle = Ti.UI.createView({
+		width:30,
+		height:30,
+		borderRadius:15,
+		backgroundColor:'#00BFFF',
+		left:0
+	});
+	
+	var alertsNumber = Ti.UI.createLabel({
+		width:Ti.UI.SIZE,
+		height:Ti.UI.SIZE,
+		text:'2',
+		color:'#FFF',
+		font:{
+			fontSize:18,
+	    	fontFamily:fontFamilyVar
+	    }
+	});
+	
+	var alertsText = Ti.UI.createLabel({
+		width:Ti.UI.SIZE,
+		height:Ti.UI.SIZE,
+		text:'alerts',
+		color:'#595959',
+		font:{
+			fontSize:16,
+	    	fontFamily:fontFamilyVar
+	   	},
+	   	left:8
+	});
+	
+	alertsNumberCircle.add(alertsNumber);
+	alertsView.add(alertsNumberCircle);
+	alertsView.add(alertsText);
+	
+	profileInfoView.add(alertsView);
+	
+	bottomView.add(profileInfoView);
 	
 	calendarTableData.push(profileRow);
 	
@@ -268,9 +354,9 @@ function homeForm(){
 	
 	calendarTableData.push(section);
 	
-	var daysToSubtract = 11;
+	var daysToSubtract = 7;
 	
-	for (var i=0; i<3; i++) {
+	for (var i=0; i<2; i++) {
 		var weekRow = Ti.UI.createTableViewRow({
 			width:'100%',
 			height:62,
@@ -477,7 +563,7 @@ function homeForm(){
 	var linksTable = Ti.UI.createTableView({
 		width:Ti.UI.FILL,
 		height:Ti.UI.SIZE,
-		top:0,
+		bottom:8,
 		right:8,
 		left:8,
 		borderWidth:1,

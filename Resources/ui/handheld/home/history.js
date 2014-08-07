@@ -26,7 +26,7 @@ function historyWindow(){
 	
 	var buttonView = Ti.UI.createView({
 		width:Ti.UI.FILL,
-		height:62,
+		height:70,
 		backgroundColor:'#d7d6d5',
 		layout:'horizontal'
 	});
@@ -36,22 +36,7 @@ function historyWindow(){
 		width:148,
 		height:54,
 		top:8,
-		bottom:0,
-		left:8,
-		right:4,
-		font:{
-			fontSize:18,
-			fontFamily:fontFamilyVar
-		},
-		backgroundColor:'#FFF'
-	});
-	
-	var graphButton = Titanium.UI.createButton({
-		title:'Graph',
-		width:148,
-		height:54,
-		top:8,
-		bottom:0,
+		bottom:8,
 		left:4,
 		right:8,
 		font:{
@@ -61,8 +46,31 @@ function historyWindow(){
 		backgroundColor:'#FFF'
 	});
 	
-	buttonView.add(listButton);
+	listButton.addEventListener('click', function() {
+		loadMigraines();
+	});
+	
+	var graphButton = Titanium.UI.createButton({
+		title:'Graph',
+		width:148,
+		height:54,
+		top:8,
+		bottom:8,
+		left:8,
+		right:4,
+		font:{
+			fontSize:18,
+			fontFamily:fontFamilyVar
+		},
+		backgroundColor:'#FFF'
+	});
+	
+	graphButton.addEventListener('click', function() {
+		loadMigraineCharts();
+	});
+	
 	buttonView.add(graphButton);
+	buttonView.add(listButton);
 	
 	self.add(buttonView);
 	
@@ -208,7 +216,8 @@ function historyWindow(){
 			font:{
 				fontSize:fontSizeVar,
 		    	fontFamily:fontFamilyVar
-		  	}
+		  },
+		  borderRadius:2
 		});
 		
 		colorOverlay.add(severityString);
@@ -259,12 +268,53 @@ function historyWindow(){
 		return row;
 	}
 	
+	function createChartRow(){
+		
+		var row = Ti.UI.createTableViewRow({
+			width:Ti.UI.FILL,
+			height:290,
+			title:'',
+			top:0,
+			bottom:0,
+			layout:'vertical',
+			backgroundColor:'transparent'
+		});
+		
+		var webViewURL = "http://"+domain+"/model/mobile/migraineChart1.cfm";
+				
+		var migraineChart = Ti.UI.createWebView({
+			url:webViewURL,
+			width:Ti.UI.FILL,
+			height:Ti.UI.FILL,
+			layout:'absolute',
+			left:0,
+			right:0,
+			top:0,
+			bottom:8,
+			scalesPageToFit:false,
+			disableBounce:true,
+			backgroundColor:'#00BFFF',
+			borderRadius:4,
+			borderWidth:1,
+			borderColor:'#00BFFF'
+			
+		});
+		
+		migraineChart.addEventListener('load', function() {
+			migraineChart.evalJS("testJS()");
+		});
+		
+		row.add(migraineChart);
+		
+		return row;
+	}
+	
 	var calendarTable = Ti.UI.createTableView({
 		width:Ti.UI.FILL,
 		height:Ti.UI.FILL,
-		top:8,
+		top:0,
 		bottom:0,
-		top:8,
+		top:0,
 		right:8,
 		left:8,
 		data:migrainesTableData,
@@ -303,6 +353,8 @@ function historyWindow(){
 
 				calendarTable.setData(migrainesTableData);
 				
+				calendarTable.scrollToTop();
+				
 				callLoadingWindow.close();
 	    	},
 	    	onerror: function(e) {
@@ -318,8 +370,19 @@ function historyWindow(){
 		xhr.send(loadData);	
 	}	
 	
+	function loadMigraineCharts(){
+	    
+	    var migrainesTableData = [];
+	    
+		migrainesTableData.push(createChartRow());
+		migrainesTableData.push(createChartRow());
+    	
+		calendarTable.setData(migrainesTableData);
+	    	
+	}
+	
 	self.addEventListener('open', function(e) {
-		loadMigraines();
+		loadMigraineCharts();
 	});
 	
 	return self;

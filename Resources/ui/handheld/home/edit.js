@@ -14,9 +14,14 @@ function addForm(_args){
 	var userid = Ti.App.Properties.getString('userid');
 	var domain = Ti.App.Properties.getString('domain');
 	var loadingWindow = require('/ui/handheld/loadingWindow');
+	var migraineid = _args.migraineid;
+	var containingTab = _args.containingTab;
 	var parentObject = this;
+	var locationsField;
 	var locationsCountLabel;
 	var triggersCountLabel;
+	var notesField;
+	var migraineid = _args.migraineid;
 	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
@@ -58,10 +63,10 @@ function addForm(_args){
 	self.setRightNavButton(saveButton);
 	
 	saveButton.addEventListener('click', function(e) {
-		
-		var saveURL = "http://"+domain+"/model/mobile/services/migraines.cfc?method=addMigraine";
+		var saveURL = "http://"+domain+"/model/mobile/services/migraines.cfc?method=editMigraine";
 		var saveData = {
 		    userid: userid,
+		    migraineid: migraineid,
 		    startdatetime: startDateField.value,
 		    enddatetime: endDateField.value,
 		    severity: 1,
@@ -81,32 +86,14 @@ function addForm(_args){
 		var xhr = Ti.Network.createHTTPClient({
 			enableKeepAlive:false,
 	    	onload: function() {
+	    		
 				var json = JSON.parse(this.responseText);
 				var migraine = json.MIGRAINEINFO[0];
 				var	migraineid = migraine.ID;
-				
-				addTableData = [];
-				weatherTableData = [];
-				populateAddTable();
+
 				//startDateTimePickerView.animate(slideUp);
 				
-				if(Titanium.Network.networkType == Titanium.Network.NETWORK_NONE){
-					var alertDialog = Ti.UI.createAlertDialog({
-						title:'WARNING!',
-						message:'Your device is not online.',
-						buttonNames:['OK']
-					});
-					alertDialog.show();
-				}
-				else{
-					loadWeatherData();
-				}	
-				
-				tabbar.setActiveTab(0);
-				
-				var historyWindow = require('/ui/handheld/home/history');
-				var callHistoryWindow = new historyWindow();
-				tabbar.activeTab.open(callHistoryWindow);
+				self.close();
 				
 				callLoadingWindow.close();
 	    	},
@@ -319,8 +306,10 @@ function addForm(_args){
 	
 	mainContainerView.add(addTable);
 
-	function populateAddTable(){
+	function populateAddTable(json){
 		
+		migraine = json.MIGRAINE[0];
+
 		var sectionView = Ti.UI.createView({
 			backgroundColor:'#F5F5F5',
 			height:24
@@ -370,7 +359,8 @@ function addForm(_args){
 		    borderStyle: Ti.UI.INPUT_BORDERSTYLE_NONE,
 		    height:54,
 		    autocorrect:false,
-		    bubbleParent: false
+		    bubbleParent: false,
+		    value:migraine.STARTDATETIME
 		}));
 		
 		startDateField.addEventListener('focus', function(e) {
@@ -426,7 +416,8 @@ function addForm(_args){
 		    borderStyle: Ti.UI.INPUT_BORDERSTYLE_NONE,
 		    height:54,
 		    autocorrect:false,
-		    bubbleParent: false
+		    bubbleParent: false,
+		    value:migraine.ENDDATETIME
 		}));
 		
 		endDateField.addEventListener('focus', function(e) {
@@ -577,15 +568,15 @@ function addForm(_args){
 		painRow.addEventListener('click', function() {
 			var painLocationsWindow = require('/ui/handheld/home/painLocations');
 			var callPainLocationsWindow = new painLocationsWindow({parentObject:parentObject,preSelectedValues:locationsField.value});
-			self.containingTab.open(callPainLocationsWindow);
+			containingTab.open(callPainLocationsWindow);
 		});
 		
 		locationsField = Ti.UI.createTextField({
-			value:''
+			value:migraine.LOCATIONS
 		});
 		
 		locationsCountLabel = Ti.UI.createLabel(ef.combine($$.settingsLabel,{
-			text:'',
+			text:migraine.LOCATIONS.length,
 			right:10
 		}));
 		
@@ -609,15 +600,15 @@ function addForm(_args){
 		triggersRow.addEventListener('click', function() {
 			var triggersWindow = require('/ui/handheld/home/triggers');
 			var callTriggersWindow = new triggersWindow({parentObject:parentObject,preSelectedValues:triggersField.value});
-			self.containingTab.open(callTriggersWindow);
+			containingTab.open(callTriggersWindow);
 		});
 		
 		triggersField = Ti.UI.createTextField({
-			value:''
+			value:migraine.TRIGGERS
 		});
 		
 		triggersCountLabel = Ti.UI.createLabel(ef.combine($$.settingsLabel,{
-			text:'',
+			text:migraine.TRIGGERS.length,
 			right:10
 		}));
 		
@@ -629,10 +620,17 @@ function addForm(_args){
 			title:'',
 			hasChild:false
 		});
+
+		if(migraine.NOTES != '' && migraine.NOTES != 'Notes' && migraine.NOTES != null) {
+			var notesVar = migraine.NOTES;
+		}
+		else {
+			var notesVar = 'Notes';
+		}
 		
-		var notesField = Titanium.UI.createTextArea(ef.combine($$.settingsLabel,{
+		notesField = Titanium.UI.createTextArea(ef.combine($$.settingsLabel,{
 		    textAlign:'left',
-		  	value:'Notes',
+		  	value:notesVar,
 		  	width:Ti.UI.FILL,
 		  	height:108,
 		  	left:10,
@@ -695,7 +693,8 @@ function addForm(_args){
 		    height:54,
 		    autocorrect:false,
 		    bubbleParent: false,
-		    returnKeyType:Titanium.UI.RETURNKEY_DONE
+		    returnKeyType:Titanium.UI.RETURNKEY_DONE,
+		    value:migraine.CITY
 		}));
 		
 		row.add(fieldLabel);
@@ -727,7 +726,8 @@ function addForm(_args){
 		    height:54,
 		    autocorrect:false,
 		    bubbleParent: false,
-		    returnKeyType:Titanium.UI.RETURNKEY_DONE
+		    returnKeyType:Titanium.UI.RETURNKEY_DONE,
+		    value:migraine.CONDITION
 		}));
 		
 		row.add(fieldLabel);
@@ -759,7 +759,8 @@ function addForm(_args){
 		    height:54,
 		    autocorrect:false,
 		    bubbleParent: false,
-		    returnKeyType:Titanium.UI.RETURNKEY_DONE
+		    returnKeyType:Titanium.UI.RETURNKEY_DONE,
+		    value:migraine.TEMPERATURE
 		}));
 		
 		row.add(fieldLabel);
@@ -791,7 +792,8 @@ function addForm(_args){
 		    height:54,
 		    autocorrect:false,
 		    bubbleParent: false,
-		    returnKeyType:Titanium.UI.RETURNKEY_DONE
+		    returnKeyType:Titanium.UI.RETURNKEY_DONE,
+		    value:migraine.HUMIDITY
 		}));
 		
 		row.add(fieldLabel);
@@ -823,7 +825,8 @@ function addForm(_args){
 		    height:54,
 		    autocorrect:false,
 		    bubbleParent: false,
-		    returnKeyType:Titanium.UI.RETURNKEY_DONE
+		    returnKeyType:Titanium.UI.RETURNKEY_DONE,
+		    value:migraine.PRESSURE
 		}));
 		
 		row.add(fieldLabel);
@@ -832,111 +835,6 @@ function addForm(_args){
 		weatherTableData.push(row);
 		
 		weatherTable.setData(weatherTableData);
-	}
-	
-	tabbar.addEventListener('focus', function(e) {
-		if(e.index == 1){
-			addTableData = [];
-			weatherTableData = [];
-			populateAddTable();
-			//startDateTimePickerView.animate(slideUp);
-			
-			if(Titanium.Network.networkType == Titanium.Network.NETWORK_NONE){
-				var alertDialog = Ti.UI.createAlertDialog({
-					title:'WARNING!',
-					message:'Your device is not online.',
-					buttonNames:['OK']
-				});
-				alertDialog.show();
-			}
-			else{
-				loadWeatherData();
-			}
-		}
-	});
-	
-	function loadWeatherData(){
-		
-		//loadingView.animate(slideLoadingDown);
-		
-		Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
-		Titanium.Geolocation.distanceFilter = 10;
-		Titanium.Geolocation.purpose = 'MYgraine needs your location to get your local weather information.';
-
-		Titanium.Geolocation.getCurrentPosition(function(e){
-			if (e.error){
-				return;
-			}
-			
-			var longitude = e.coords.longitude;
-			var latitude = e.coords.latitude;
-			var domain = Ti.App.Properties.getString('domain');
-			var userid = Ti.App.Properties.getString('userid');
-			var saveURL = "http://"+domain+"/model/services/users.cfc?method=setUserLocation";
-			var saveData = {
-				userid: userid,
-			    longitude:longitude,
-			    latitude:latitude
-			};
-		
-			Ti.Yahoo.yql('select * from yahoo.maps.findLocation where q="' + latitude + ',' + longitude + '" and gflags="R"', function(f) {
-		        var url ='http://weather.yahooapis.com/forecastrss?w='+ f.data.json.ResultSet.Results.woeid + '&u=f';
-		        var xhr = Ti.Network.createHTTPClient({
-		        	onload: function() {
-			            var weather = this.responseXML;
-		                var city = weather.documentElement.getElementsByTagName("yweather:location").item(0).getAttribute("city");
-		                var temp = weather.documentElement.getElementsByTagName("item").item(0).getElementsByTagName("yweather:condition").item(0).getAttribute("temp");
-		                var tempText = weather.documentElement.getElementsByTagName("item").item(0).getElementsByTagName("yweather:condition").item(0).getAttribute("text");
-		                var humidity = weather.documentElement.getElementsByTagName("yweather:atmosphere").item(0).getAttribute("humidity");
-		                var pressure = weather.documentElement.getElementsByTagName("yweather:atmosphere").item(0).getAttribute("pressure");
-		                var unit = weather.documentElement.getElementsByTagName("yweather:units").item(0).getAttribute("temperature");
-		                
-		                cityField.value = city;
-		                tempField.value = temp + ' ' + unit;
-		                conditionField.value = tempText;
-		                humidityField.value = humidity + ' %';
-		                pressureField.value = pressure + ' in';
-		                
-		                //loadingView.animate(slideLoadingUp);
-			        },
-			        onerror: function(g) {
-			    		Ti.API.info("STATUS: " + this.status);
-				    	Ti.API.info("TEXT:   " + this.responseText);
-				    	Ti.API.info("ERROR:  " + g.error);
-				    	//loadingView.animate(slideLoadingUp);
-				    	alert('Error retrieving local weather information.  Please try again later.');
-		    		},
-		    		timeout:5000
-		        });
-		        
-		        xhr.open('GET',url);
-		        xhr.send();
-		    });
-			
-			/*
-			var xhr = Ti.Network.createHTTPClient({
-		    	onload: function() {
-		    		var json = JSON.parse(this.responseText);
-		    		var settings = json.SETTINGS[0];
-		    		var	countryLabel = settings.COUNTRYLABEL;
-		    		
-		    		loadingView.animate(slideLoadingUp);
-				},
-				onerror: function(e) {
-		    		Ti.API.info("STATUS: " + this.status);
-			    	Ti.API.info("TEXT:   " + this.responseText);
-			    	Ti.API.info("ERROR:  " + e.error);
-			    	loadingView.animate(slideLoadingUp);
-			    	alert('Error retrieving local weather information.  Please try again later.');
-		    	},
-				timeout:5000
-			});
-			*/
-			
-			//xhr.open("GET", saveURL);
-			//xhr.send(saveData);
-		});
-		
 	}
 	
 	var weatherTable = Ti.UI.createTableView({
@@ -961,6 +859,41 @@ function addForm(_args){
 	
 	mainContainerView.add(weatherTable);
 	
+	function loadMigraine(){
+		json = '';
+		medsTableData = [];
+		
+		var loadURL = "http://"+domain+"/model/mobile/services/migraines.cfc?method=getMigraineDetails";
+		var loadData = {
+			userid: userid,
+			migraineid: migraineid
+		};
+		
+		var	callLoadingWindow = new loadingWindow();
+			callLoadingWindow.open();
+			
+		var xhr = Ti.Network.createHTTPClient({
+	    	onload: function() {
+	    		var json = JSON.parse(this.responseText);
+	    		
+				populateAddTable(json);
+
+				callLoadingWindow.close();
+			},
+	    	onerror: function(e) {
+	    		Ti.API.info("STATUS: " + this.status);
+		    	Ti.API.info("TEXT:   " + this.responseText);
+		    	Ti.API.info("ERROR:  " + e.error);
+		    	callLoadingWindow.close();
+	    	},
+	    	timeout:5000
+	    });
+	    
+	    xhr.open("GET", loadURL);
+		xhr.send(loadData);
+	
+	}
+	
 	function populateLocations(selectedValues){
 		locationsField.value = selectedValues;
 		locationsCountLabel.text = selectedValues.length;
@@ -978,6 +911,10 @@ function addForm(_args){
 	this.populateTriggers = function(selectedValues){
 		populateTriggers(selectedValues);
 	};
+	
+	self.addEventListener('open', function(e) {
+		loadMigraine();
+	});
 	
 	return self;
 };

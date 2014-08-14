@@ -1,8 +1,11 @@
-function painLocationsWindow(){
+function painLocationsWindow(_args){
 	
 	var locationsTableData = [];
 	var fontFamilyVar = 'Source Sans Pro';
 	var fontSizeVar ='16';
+	var selectedValues = [];
+	var parentObject = _args.parentObject;
+	var preSelectedValues = _args.preSelectedValues;
 	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
@@ -38,16 +41,37 @@ function painLocationsWindow(){
 	painArray.push('Behind forehead');
 	
 	for(i=0;i<painArray.length;i++){
+
+		if(preSelectedValues.indexOf(painArray[i]) != -1){
+			var checkedVar = true;
+			selectedValues.push(painArray[i]);
+		}
+		else{
+			var checkedVar = false;
+		}
 		
 		var row = Ti.UI.createTableViewRow({
 			title:'',
 			hasChild:false,
-			hasCheck:true
+			hasCheck:checkedVar,
+			val:painArray[i]
+		});
+		
+		row.addEventListener('click', function(e) {
+			var checked = e.rowData.hasCheck;
+			if(checked){
+				e.rowData.hasCheck = false;
+				selectedValues.pop(e.rowData.val);
+			}
+			else{
+				e.rowData.hasCheck = true;
+				selectedValues.push(e.rowData.val);
+			}
 		});
 		
 		var fieldLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
-		    text: painArray[i],
-		    left: 15,
+		    text:painArray[i],
+		    left:15,
 		    height:54,
 		    value:painArray[i]
 		}));
@@ -72,6 +96,10 @@ function painLocationsWindow(){
 	});
 	
 	self.add(locationsTable);
+	
+	self.addEventListener('close', function(e) {
+		parentObject.populateLocations(selectedValues);
+	});
 	
 	return self;
 	

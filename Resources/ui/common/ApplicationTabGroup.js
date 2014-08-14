@@ -14,7 +14,7 @@ function ApplicationTabGroup(Window) {
 	var settingsWindow = require('/ui/handheld/settings/settings');
 					
 	//create app tabs
-	var win1 = new homeWindow(),
+	var win1 = new homeWindow({tabbar:self}),
 		win2 = new addWindow({tabbar:self}),
 		win3 = new settingsWindow({tabbar:self});
 

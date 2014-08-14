@@ -1,4 +1,4 @@
-function historyWindow(){
+function historyWindow(_args){
 	
 	var migrainesTableData = [];
 	var migraineDetailsWindow = require('/ui/handheld/home/migraineDetails');
@@ -8,8 +8,13 @@ function historyWindow(){
 	var userid = Ti.App.Properties.getString('userid');
 	var domain = Ti.App.Properties.getString('domain');
 	var loadingWindow = require('/ui/handheld/loadingWindow');
+	var tabbar = _args.tabbar;
+	var containingTab = _args.containingTab;
 	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
+		layout:'vertical',
+		backgroundColor:'#d7d6d5',
+		
 		titleControl:Ti.UI.createLabel({
 			text:'History',
 			color:'#FFF',
@@ -17,13 +22,9 @@ function historyWindow(){
 				fontSize:18,
 				fontFamily:fontFamilyVar
 			}
-		}),
-		fullscreen:false,
-		navBarHidden:false,
-		layout:'vertical',
-		backgroundColor:'#d7d6d5'
+		})
 	}));
-	
+
 	var buttonView = Ti.UI.createView({
 		width:Ti.UI.FILL,
 		height:70,
@@ -84,6 +85,12 @@ function historyWindow(){
 		}
 	});
 	
+	shareButton.addEventListener('click', function() {
+		var shareWindow = require('/ui/handheld/home/share');
+		var callShareWindow = new shareWindow();
+		self.containingTab.open(callShareWindow);
+	});
+	
 	self.setRightNavButton(shareButton);
 	
 	function getDateFormatted(days){
@@ -135,7 +142,8 @@ function historyWindow(){
 			height:93,
 			title:'',
 			top:0,
-			layout:'horizontal'
+			layout:'horizontal',
+			migraineid:migraine.MIGRAINEID
 		});
 		
 		var calendarView = Ti.UI.createView({
@@ -143,6 +151,7 @@ function historyWindow(){
 			height:69,
 			backgroundColor:'#FFF',
 			borderRadius:2,
+			borderColor:'#CCC',
 			left:8,
 			right:8
 		});
@@ -176,10 +185,10 @@ function historyWindow(){
 			width:Ti.UI.FILL,
 			height:85,
 			top:0,
-			backgroundColor:'#00BFFF',
+			backgroundColor:'#FFF',
 			borderRadius:2,
 			borderWidth:1,
-			borderColor:'#00BFFF'
+			borderColor:'#CCC'
 		});
 		
 		row.add(dayColumn);
@@ -260,15 +269,16 @@ function historyWindow(){
 		datesColumn.add(colorOverlay);
 		dayColumn.add(datesColumn);
 		
-		dayColumn.addEventListener('click', function() {
-			var callMigraineDetailsWindow = new migraineDetailsWindow();
-			callMigraineDetailsWindow.open({modal:true});
+		row.addEventListener('click', function(e) {
+			var migraineEditWindow = require('/ui/handheld/home/edit');
+			var callEditMigraineWindow = new migraineEditWindow({tabbar:tabbar,containingTab:containingTab,migraineid:e.rowData.migraineid});
+			containingTab.open(callEditMigraineWindow);
 		});
 		
 		return row;
 	}
 	
-	function createChartRow(){
+	function createChartRow(webViewURL){
 		
 		var row = Ti.UI.createTableViewRow({
 			width:Ti.UI.FILL,
@@ -279,8 +289,6 @@ function historyWindow(){
 			layout:'vertical',
 			backgroundColor:'transparent'
 		});
-		
-		var webViewURL = "http://"+domain+"/model/mobile/migraineChart1.cfm";
 				
 		var migraineChart = Ti.UI.createWebView({
 			url:webViewURL,
@@ -296,7 +304,7 @@ function historyWindow(){
 			backgroundColor:'#00BFFF',
 			borderRadius:4,
 			borderWidth:1,
-			borderColor:'#00BFFF'
+			borderColor:'#CCC'
 			
 		});
 		
@@ -374,8 +382,10 @@ function historyWindow(){
 	    
 	    var migrainesTableData = [];
 	    
-		migrainesTableData.push(createChartRow());
-		migrainesTableData.push(createChartRow());
+	    var webViewURL = "http://"+domain+"/model/mobile/migraineChart1.cfm";
+		migrainesTableData.push(createChartRow(webViewURL));
+		var webViewURL = "http://"+domain+"/model/mobile/migraineChart2.cfm";
+		migrainesTableData.push(createChartRow(webViewURL));
     	
 		calendarTable.setData(migrainesTableData);
 	    	

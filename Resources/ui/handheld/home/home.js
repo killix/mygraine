@@ -1,11 +1,15 @@
-function homeForm(){
+function homeForm(_args){
 	
 	var calendarTableData = [];
 	var linksTableData = [];
 	var fontFamilyVar = 'Source Sans Pro';
 	var fontSizeVar ='16';
-	var migraineDetailsWindow = require('/ui/handheld/home/migraineDetails');
 	var notificationsWindow = require('/ui/handheld/home/notificationsWindow');
+	var tabbar = _args.tabbar;
+	var loadingWindow = require('/ui/handheld/loadingWindow');
+	var userid = Ti.App.Properties.getString('userid');
+	var domain = Ti.App.Properties.getString('domain');
+	var medicationsCountLabel;
 	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
@@ -340,7 +344,7 @@ function homeForm(){
 	
 	viewHistoryButton.addEventListener('click', function() {
 		var historyWindow = require('/ui/handheld/home/history');
-		var callHistoryWindow = new historyWindow();
+		var callHistoryWindow = new historyWindow({tabbar:tabbar,containingTab:self.containingTab});
 		self.containingTab.open(callHistoryWindow);
 	});
 	
@@ -354,22 +358,28 @@ function homeForm(){
 	
 	calendarTableData.push(section);
 	
-	var daysToSubtract = 7;
-	
-	for (var i=0; i<2; i++) {
-		var weekRow = Ti.UI.createTableViewRow({
-			width:'100%',
-			height:62,
-			title:'',
-			top:8,
-			layout:'horizontal'
-		});
-		for (var j=0; j<4; j++) {
-			if(j==0){
+	function populateRecentHistory(json){
+		var migraineCount = 0;
+		for (i = 0; i < json.MIGRAINE.length; i++) {
+			migraineCount = migraineCount+1;
+			migraine = json.MIGRAINE[i];
+			
+			if(migraineCount == 1){
+			
+				var weekRow = Ti.UI.createTableViewRow({
+					width:'100%',
+					height:62,
+					title:'',
+					top:8,
+					layout:'horizontal'
+				});
+			}
+			
+			if(migraineCount==1){
 				var leftVar = 8;
 				var rightVar = 4;
 			}
-			else if(j==3){
+			else if(migraineCount==4){
 				var leftVar = 4;
 				var rightVar = 8;
 			}
@@ -383,24 +393,27 @@ function homeForm(){
 				right:rightVar,
 				top:0,
 				left:leftVar,
-				backgroundColor:'#00BFFF',
-				borderRadius:2
+				backgroundColor:'#FFF',
+				borderRadius:2,
+				borderColor:'#CCC',
+				migraineid:migraine.MIGRAINEID
 			});
 			
 			var labelView = Ti.UI.createView({
 				width:Ti.UI.FILL,
 				height:Ti.UI.FILL,
 				backgroundColor:'transparent',
-				layout:'vertical'
+				layout:'vertical',
+				migraineid:migraine.MIGRAINEID
 			});
 			
-			if(j==0){
+			if(migraine.SEVERITY==1){
 				var circleColor = '#0F0';
 			}
-			else if(j==1){
+			else if(migraine.SEVERITY==2){
 				var circleColor = '#FF0';
 			}
-			else if(j==2){
+			else if(migraine.SEVERITY==3){
 				var circleColor = '#FF8300';
 			}
 			else{
@@ -409,45 +422,70 @@ function homeForm(){
 			
 			var redOverlay = Ti.UI.createView({
 				width:Ti.UI.FILL,
-				height:(j+1)*25+'%',
+				height:(migraine.SEVERITY)*25+'%',
 				bottom:0,
-				backgroundColor:circleColor
+				backgroundColor:circleColor,
+				migraineid:migraine.MIGRAINEID
 			});
 			
 			var dayString = Ti.UI.createLabel({
-				text:getDateString(daysToSubtract),
+				text:migraine.DAYOFWEEK,
+				height:Ti.UI.SIZE,
 				color:'#595959',
 				font:{
-					fontSize:fontSizeVar,
+					fontSize:14,
 			    	fontFamily:fontFamilyVar
-			   },
-			   top:0
+			   	},
+			   	top:4,
+			   	bottom:0,
+			   	backgroundColor:'',
+			   	migraineid:migraine.MIGRAINEID
 			});
 			
 			var dayNumber = Ti.UI.createLabel({
-				text:getMonthString(daysToSubtract) + ' ' + getDateFormatted(daysToSubtract),
+				text:migraine.DAYNUMBER,
+				height:Ti.UI.SIZE,
+				color:'#595959',
+				font:{
+					fontSize:22,
+			    	fontFamily:fontFamilyVar
+			   	},
+			   	top:0,
+			   	backgroundColor:'',
+			   	migraineid:migraine.MIGRAINEID
+			});
+			
+			var dayMonth = Ti.UI.createLabel({
+				text:'',
+				height:Ti.UI.SIZE,
 				color:'#595959',
 				font:{
 					fontSize:fontSizeVar,
 			    	fontFamily:fontFamilyVar
-			    }
+			   	},
+			   	migraineid:migraine.MIGRAINEID
 			});
-			
-			daysToSubtract = daysToSubtract-1;
 			
 			dayColumn.add(redOverlay);
 			dayColumn.add(labelView);
 			labelView.add(dayString);
 			labelView.add(dayNumber);
+			//labelView.add(dayMonth);
 			
 			weekRow.add(dayColumn);
 			
-			dayColumn.addEventListener('click', function() {
-				var callMigraineDetailsWindow = new migraineDetailsWindow();
-				callMigraineDetailsWindow.open({modal:true});
+			dayColumn.addEventListener('click', function(e) {
+				var migraineEditWindow = require('/ui/handheld/home/edit');
+				var callEditMigraineWindow = new migraineEditWindow({tabbar:tabbar,containingTab:self.containingTab,migraineid:e.source.migraineid});
+				self.containingTab.open(callEditMigraineWindow);
 			});
+			
+			if(migraineCount == 4 || migraineCount == json.MIGRAINE.length){
+				calendarTableData.push(weekRow);
+				migraineCount = 0;
+			}
 		}
-		calendarTableData.push(weekRow);
+		calendarTable.setData(calendarTableData);
 	}
 	
 	var calendarTable = Ti.UI.createTableView({
@@ -477,7 +515,6 @@ function homeForm(){
 		left:0,
 		hasChild:true,
 		backgroundColor:'#FFF',
-		layout:'vertical',
 		leftImage:'/images/pill.png'
 	});
 	
@@ -495,9 +532,16 @@ function homeForm(){
 	
 	linkRow.add(linkLabel);
 	
+	medicationsCountLabel = Ti.UI.createLabel(ef.combine($$.settingsLabel,{
+		text:'',
+		right:10
+	}));
+	
+	linkRow.add(medicationsCountLabel);
+	
 	linkRow.addEventListener('click', function() {
 		var historyWindow = require('/ui/handheld/home/medications');
-		var callHistoryWindow = new historyWindow();
+		var callHistoryWindow = new historyWindow({containingTab:self.containingTab});
 		self.containingTab.open(callHistoryWindow);
 	});
 	
@@ -580,6 +624,42 @@ function homeForm(){
 	});
 	
 	self.add(linksTable);
+	
+	function loadHomeScreen(){
+		var loadURL = "http://"+domain+"/model/mobile/services/migraines.cfc?method=getHomeMigraines";
+		var loadData = {
+			userid: userid
+		};
+		
+		var	callLoadingWindow = new loadingWindow();
+			callLoadingWindow.open();
+			
+		var xhr = Ti.Network.createHTTPClient({
+	    	onload: function() {
+	    		var json = JSON.parse(this.responseText);
+	    		
+				populateRecentHistory(json);
+				Ti.API.info(json.MEDICATIONS.COUNT);
+				medicationsCountLabel.text = json.MEDICATIONS.COUNT;
+				
+				callLoadingWindow.close();
+			},
+	    	onerror: function(e) {
+	    		Ti.API.info("STATUS: " + this.status);
+		    	Ti.API.info("TEXT:   " + this.responseText);
+		    	Ti.API.info("ERROR:  " + e.error);
+		    	callLoadingWindow.close();
+	    	},
+	    	timeout:5000
+	    });
+	    
+	    xhr.open("GET", loadURL);
+		xhr.send(loadData);
+	}
+	
+	self.addEventListener('open',function(e){
+		loadHomeScreen();
+	});
 	
 	return self;
 };

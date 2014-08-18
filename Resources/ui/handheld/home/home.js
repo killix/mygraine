@@ -1,6 +1,7 @@
 function homeForm(_args){
 	
 	var calendarTableData = [];
+	var recentHistoryTableData = [];
 	var linksTableData = [];
 	var fontFamilyVar = 'Source Sans Pro';
 	var fontSizeVar ='16';
@@ -10,6 +11,7 @@ function homeForm(_args){
 	var userid = Ti.App.Properties.getString('userid');
 	var domain = Ti.App.Properties.getString('domain');
 	var medicationsCountLabel;
+	var parentObject = this;
 	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
@@ -119,7 +121,7 @@ function homeForm(_args){
 	});
 	
 	var nameLabel = Ti.UI.createLabel({
-		text: 'Jim Villa',
+		text: '-',
 	    left:8,
 	    right:8,
 	    top:2,
@@ -152,26 +154,37 @@ function homeForm(_args){
 	profileRow.add(bottomView);
 	profileRow.add(topView);
 	
-	var photoImageView = Ti.UI.createImageView({
-		width:Ti.UI.SIZE,
+	var photoContainerView = Ti.UI.createView({
+		width:104,
 		height:104,
-		borderRadius:2,
+		borderRadius:52,
 		left:8,
 		top:8,
 		bottom:8,
 		right:8,
-		backgroundColor:'#d7d6d5',
-		image:'/images/photo.JPG'
+		backgroundColor:'transparent',
+		borderWidth:1,
+		borderColor:'#CCC'
 	});
 	
-	bottomView.add(photoImageView);
+	var photoImageView = Ti.UI.createImageView({
+		width:Ti.UI.SIZE,
+		height:140,
+		backgroundColor:'transparent',
+		image:''
+	});
 	
+	photoContainerView.add(photoImageView);
+	
+	bottomView.add(photoContainerView);
+
 	var profileInfoView = Ti.UI.createView({
 		width:Ti.UI.FILL,
 		height:160,
 		top:8,
 		bottom:8,
 		right:8,
+		left:-10,
 		layout:'vertical'
 	});
 	
@@ -193,7 +206,7 @@ function homeForm(_args){
 	var daysSinceNumber = Ti.UI.createLabel({
 		width:Ti.UI.SIZE,
 		height:Ti.UI.SIZE,
-		text:'8',
+		text:'-',
 		color:'#FFF',
 		font:{
 			fontSize:18,
@@ -201,13 +214,24 @@ function homeForm(_args){
 	    }
 	});
 	
+	function loadNumber(number,field){
+		var startnumber = 0;
+		var timer = setInterval(function(){
+			field.text = startnumber;
+			if(startnumber == number){
+				clearInterval(timer);
+			}
+			startnumber = startnumber+1;
+		},50);
+	}
+	
 	var daysSinceText = Ti.UI.createLabel({
 		width:Ti.UI.SIZE,
 		height:Ti.UI.SIZE,
 		text:'days since last migraine',
 		color:'#595959',
 		font:{
-			fontSize:16,
+			fontSize:12,
 	    	fontFamily:fontFamilyVar
 	   	},
 	   	left:8
@@ -218,6 +242,51 @@ function homeForm(_args){
 	daysSinceView.add(daysSinceText);
 	
 	profileInfoView.add(daysSinceView);
+	
+	var totalMigrainesView = Ti.UI.createView({
+		width:Ti.UI.SIZE,
+		height:Ti.UI.SIZE,
+		left:10,
+		top:6,
+		layout:'horizontal'
+	});
+	
+	var totalMigrainesNumberCircle = Ti.UI.createView({
+		width:30,
+		height:30,
+		borderRadius:15,
+		backgroundColor:'#00BFFF',
+		left:0
+	});
+	
+	var totalMigrainesNumber = Ti.UI.createLabel({
+		width:Ti.UI.SIZE,
+		height:Ti.UI.SIZE,
+		text:'-',
+		color:'#FFF',
+		font:{
+			fontSize:18,
+	    	fontFamily:fontFamilyVar
+	    }
+	});
+	
+	var totalMigrainesText = Ti.UI.createLabel({
+		width:Ti.UI.SIZE,
+		height:Ti.UI.SIZE,
+		text:'migraines recorded',
+		color:'#595959',
+		font:{
+			fontSize:12,
+	    	fontFamily:fontFamilyVar
+	   	},
+	   	left:8
+	});
+	
+	totalMigrainesNumberCircle.add(totalMigrainesNumber);
+	totalMigrainesView.add(totalMigrainesNumberCircle);
+	totalMigrainesView.add(totalMigrainesText);
+	
+	profileInfoView.add(totalMigrainesView);
 	
 	var totalMigrainesView = Ti.UI.createView({
 		width:Ti.UI.SIZE,
@@ -235,79 +304,36 @@ function homeForm(_args){
 		left:0
 	});
 	
-	var totalMigrainesNumber = Ti.UI.createLabel({
+	var otherMigrainesNumber = Ti.UI.createLabel({
 		width:Ti.UI.SIZE,
 		height:Ti.UI.SIZE,
-		text:'32',
+		text:'6',
 		color:'#FFF',
 		font:{
 			fontSize:18,
 	    	fontFamily:fontFamilyVar
 	    }
 	});
+	
+	loadNumber(6,otherMigrainesNumber);
 	
 	var totalMigrainesText = Ti.UI.createLabel({
 		width:Ti.UI.SIZE,
 		height:Ti.UI.SIZE,
-		text:'migraines recorded',
+		text:'blah blah',
 		color:'#595959',
 		font:{
-			fontSize:16,
+			fontSize:12,
 	    	fontFamily:fontFamilyVar
 	   	},
 	   	left:8
 	});
 	
-	totalMigrainesNumberCircle.add(totalMigrainesNumber);
+	totalMigrainesNumberCircle.add(otherMigrainesNumber);
 	totalMigrainesView.add(totalMigrainesNumberCircle);
 	totalMigrainesView.add(totalMigrainesText);
 	
 	profileInfoView.add(totalMigrainesView);
-	
-	var alertsView = Ti.UI.createView({
-		width:Ti.UI.SIZE,
-		height:Ti.UI.SIZE,
-		left:0,
-		top:6,
-		layout:'horizontal'
-	});
-	
-	var alertsNumberCircle = Ti.UI.createView({
-		width:30,
-		height:30,
-		borderRadius:15,
-		backgroundColor:'#00BFFF',
-		left:0
-	});
-	
-	var alertsNumber = Ti.UI.createLabel({
-		width:Ti.UI.SIZE,
-		height:Ti.UI.SIZE,
-		text:'2',
-		color:'#FFF',
-		font:{
-			fontSize:18,
-	    	fontFamily:fontFamilyVar
-	    }
-	});
-	
-	var alertsText = Ti.UI.createLabel({
-		width:Ti.UI.SIZE,
-		height:Ti.UI.SIZE,
-		text:'alerts',
-		color:'#595959',
-		font:{
-			fontSize:16,
-	    	fontFamily:fontFamilyVar
-	   	},
-	   	left:8
-	});
-	
-	alertsNumberCircle.add(alertsNumber);
-	alertsView.add(alertsNumberCircle);
-	alertsView.add(alertsText);
-	
-	profileInfoView.add(alertsView);
 	
 	bottomView.add(profileInfoView);
 	
@@ -358,7 +384,27 @@ function homeForm(_args){
 	
 	calendarTableData.push(section);
 	
+	var calendarTable = Ti.UI.createTableView({
+		width:Ti.UI.FILL,
+		height:Ti.UI.SIZE,
+		top:0,
+		data:calendarTableData,
+		selectionStyle:'NONE',
+		separatorStyle: Titanium.UI.iPhone.TableViewSeparatorStyle.NONE,
+    	separatorColor: '#FFF',
+		backgroundColor: 'transparent',
+		scrollable:false
+	});
+	
+	calendarTable.footerView = Ti.UI.createView({
+    	height: 1,
+   		backgroundColor: 'transparent'
+	});
+	
+	self.add(calendarTable);
+	
 	function populateRecentHistory(json){
+		recentHistoryTableData = [];
 		var migraineCount = 0;
 		for (i = 0; i < json.MIGRAINE.length; i++) {
 			migraineCount = migraineCount+1;
@@ -476,23 +522,23 @@ function homeForm(_args){
 			
 			dayColumn.addEventListener('click', function(e) {
 				var migraineEditWindow = require('/ui/handheld/home/edit');
-				var callEditMigraineWindow = new migraineEditWindow({tabbar:tabbar,containingTab:self.containingTab,migraineid:e.source.migraineid});
+				var callEditMigraineWindow = new migraineEditWindow({tabbar:tabbar,containingTab:self.containingTab,migraineid:e.source.migraineid,parentObject:parentObject});
 				self.containingTab.open(callEditMigraineWindow);
 			});
 			
 			if(migraineCount == 4 || migraineCount == json.MIGRAINE.length){
-				calendarTableData.push(weekRow);
+				recentHistoryTableData.push(weekRow);
 				migraineCount = 0;
 			}
 		}
-		calendarTable.setData(calendarTableData);
+		recentHistoryTable.setData(recentHistoryTableData);
 	}
 	
-	var calendarTable = Ti.UI.createTableView({
+	var recentHistoryTable = Ti.UI.createTableView({
 		width:Ti.UI.FILL,
 		height:Ti.UI.SIZE,
-		top:0,
-		data:calendarTableData,
+		top:215,
+		data:recentHistoryTableData,
 		selectionStyle:'NONE',
 		separatorStyle: Titanium.UI.iPhone.TableViewSeparatorStyle.NONE,
     	separatorColor: '#FFF',
@@ -500,12 +546,12 @@ function homeForm(_args){
 		scrollable:false
 	});
 	
-	calendarTable.footerView = Ti.UI.createView({
+	recentHistoryTable.footerView = Ti.UI.createView({
     	height: 1,
    		backgroundColor: 'transparent'
 	});
 	
-	self.add(calendarTable);
+	self.add(recentHistoryTable);
 	
 	var linkRow = Ti.UI.createTableViewRow({
 		width:Ti.UI.FILL,
@@ -555,7 +601,6 @@ function homeForm(_args){
 		left:0,
 		hasChild:true,
 		backgroundColor:'#FFF',
-		layout:'horizontal',
 		leftImage:'/images/answers.png'
 	});
 	
@@ -578,13 +623,13 @@ function homeForm(_args){
 		height:30,
 		borderRadius:15,
 		backgroundColor:'red',
-		left:4
+		right:0
 	});
 	
 	var alertsNumber = Ti.UI.createLabel({
 		width:Ti.UI.SIZE,
 		height:Ti.UI.SIZE,
-		text:'4',
+		text:'',
 		color:'#FFF',
 		font:{
 			fontSize:18,
@@ -593,8 +638,6 @@ function homeForm(_args){
 	});
 	
 	alertsNumberCircle.add(alertsNumber);
-	
-	alertsRow.add(alertsNumberCircle);
 	
 	alertsRow.addEventListener('click', function() {
 		var alertsWindow = require('/ui/handheld/home/alerts');
@@ -639,8 +682,18 @@ function homeForm(_args){
 	    		var json = JSON.parse(this.responseText);
 	    		
 				populateRecentHistory(json);
-				Ti.API.info(json.MEDICATIONS.COUNT);
 				medicationsCountLabel.text = json.MEDICATIONS.COUNT;
+				nameLabel.text = json.USERINFO.NAME;
+				var imageURL = "http://"+domain+"/images/profile/originals/";
+				photoImageView.image = imageURL + json.USERINFO.IMAGE;
+				daysSinceNumber.text = json.USERINFO.LASTMIGRAINEDAYS;
+				loadNumber(json.USERINFO.LASTMIGRAINEDAYS,daysSinceNumber);
+				totalMigrainesNumber.text = json.USERINFO.TOTALMIGRAINES;
+				loadNumber(json.USERINFO.TOTALMIGRAINES,totalMigrainesNumber);
+				alertsNumber.text = json.USERINFO.ALERTSCOUNT;
+				if(json.USERINFO.ALERTSCOUNT > 0){
+					alertsRow.add(alertsNumberCircle);
+				}
 				
 				callLoadingWindow.close();
 			},
@@ -660,6 +713,10 @@ function homeForm(_args){
 	self.addEventListener('open',function(e){
 		loadHomeScreen();
 	});
+	
+	this.loadHistory = function(){
+		loadHomeScreen();
+	};
 	
 	return self;
 };

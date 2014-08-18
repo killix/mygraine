@@ -7,6 +7,7 @@ function settingsForm(_args){
 	var domain = Ti.App.Properties.getString('domain');
 	var loadingWindow = require('/ui/handheld/loadingWindow');
 	var tabbar = _args.tabbar;
+	var profileImage = "";
 	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
@@ -157,7 +158,7 @@ function settingsForm(_args){
 	var profileImageView = Ti.UI.createImageView({
         width:62,
 		height:82,
-		image:'/images/photo.JPG'
+		image:''
 	});
 	
 	//Create a dialog with options
@@ -631,7 +632,8 @@ function settingsForm(_args){
 				var country = settings.COUNTRY;
 				var zipcode = settings.ZIPCODE;
 				var timezone = settings.TIMEZONE;
-				
+				var image = settings.IMAGE;
+
 				emailField.value = emailaddress;
 				passwordField.value = password;
 				firstNameField.value = firstname;
@@ -641,6 +643,8 @@ function settingsForm(_args){
 				countryField.value = country;
 				zipField.value = zipcode;
 				timezoneField.value = timezone;
+				var imageURL = "http://"+domain+"/images/profile/originals/";
+				profileImageView.image = imageURL + image;
 				
 				callLoadingWindow.close();
 				
@@ -678,6 +682,9 @@ function settingsForm(_args){
 	
 	saveButton.addEventListener('click', function(e) {
 		
+		var	callLoadingWindow = new loadingWindow();
+			callLoadingWindow.open();
+			
 		var saveURL = "http://"+domain+"/model/mobile/services/users.cfc?method=editUser";
 		var saveData = {
 		    userid: userid,
@@ -689,27 +696,53 @@ function settingsForm(_args){
 		    dateofbirth: dobField.value,
 			country: countryField.value,
 			zipcode: zipField.value,
-			timezone: timezoneField.value
+			timezone: timezoneField.value,
+			image:profileImage
 		};
 
 		var xhr = Ti.Network.createHTTPClient({
 			enableKeepAlive:false,
 	    	onload: function() {
-
+				callLoadingWindow.close();
 	    	},
 	    	onerror: function(e) {
+	    		callLoadingWindow.close();
 	    		alert("STATUS: " + this.status);
 		    	alert("TEXT:   " + this.responseText);
 		    	alert("ERROR:  " + e.error);
 	    	},
 	    	timeout:999999
 	    });
-	    //xhr.setRequestHeader("ContentType", "image/jpeg");
-		//xhr.setRequestHeader("enctype","multipart/form-data");
+	    xhr.setRequestHeader("ContentType", "image/jpeg");
+		xhr.setRequestHeader("enctype","multipart/form-data");
 	    xhr.open("GET", saveURL);
 		xhr.send(saveData);
 		
 	});
+	
+	var logoutButton = Titanium.UI.createButton({
+		title:'Logout',
+		color:'#FFF',
+		backgroundImage: 'none',
+		font:{
+			fontSize:18,
+			fontFamily:fontFamilyVar
+		}
+	});
+	
+	logoutButton.addEventListener('click', function() {
+		var loginWindow = require('/ui/handheld/loginWindow');
+		var loginWindowVar = new loginWindow();
+			loginWindowVar.open();	
+		
+		var _db = Ti.Database.open('migraine');
+		var userid = Ti.App.Properties.getString("userid");
+		_db.execute('UPDATE userLoginInfo set keepLoggedIn = 0 where userid = ?',userid);
+		Ti.App.Properties.setString("userid","0");
+		tabbar.setActiveTab(0);
+	});
+	
+	self.setLeftNavButton(logoutButton);
 	
 	return self;
 };

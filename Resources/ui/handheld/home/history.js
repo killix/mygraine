@@ -10,6 +10,7 @@ function historyWindow(_args){
 	var loadingWindow = require('/ui/handheld/loadingWindow');
 	var tabbar = _args.tabbar;
 	var containingTab = _args.containingTab;
+	var parentObject = this;
 	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		layout:'vertical',
@@ -44,7 +45,10 @@ function historyWindow(_args){
 			fontSize:18,
 			fontFamily:fontFamilyVar
 		},
-		backgroundColor:'#FFF'
+		backgroundColor:'#FFF',
+		borderWidth:1,
+		borderColor:'#CCC',
+		borderRadius:2
 	});
 	
 	listButton.addEventListener('click', function() {
@@ -63,7 +67,10 @@ function historyWindow(_args){
 			fontSize:18,
 			fontFamily:fontFamilyVar
 		},
-		backgroundColor:'#FFF'
+		backgroundColor:'#FFF',
+		borderWidth:1,
+		borderColor:'#CCC',
+		borderRadius:2
 	});
 	
 	graphButton.addEventListener('click', function() {
@@ -87,8 +94,8 @@ function historyWindow(_args){
 	
 	shareButton.addEventListener('click', function() {
 		var shareWindow = require('/ui/handheld/home/share');
-		var callShareWindow = new shareWindow();
-		self.containingTab.open(callShareWindow);
+		var callShareWindow = new shareWindow({tabbar:tabbar,containingTab:containingTab,parentObject:parentObject});
+		containingTab.open(callShareWindow);
 	});
 	
 	self.setRightNavButton(shareButton);
@@ -215,7 +222,10 @@ function historyWindow(_args){
 			bottom:0,
 			right:0,
 			left:0,
-			backgroundColor:circleColor
+			backgroundColor:circleColor,
+			borderWidth:1,
+			borderColor:'#CCC',
+			borderRadius:2
 		});
 		
 		var severityString = Ti.UI.createLabel({
@@ -271,7 +281,7 @@ function historyWindow(_args){
 		
 		row.addEventListener('click', function(e) {
 			var migraineEditWindow = require('/ui/handheld/home/edit');
-			var callEditMigraineWindow = new migraineEditWindow({tabbar:tabbar,containingTab:containingTab,migraineid:e.rowData.migraineid});
+			var callEditMigraineWindow = new migraineEditWindow({tabbar:tabbar,containingTab:containingTab,migraineid:e.rowData.migraineid,parentObject:parentObject});
 			containingTab.open(callEditMigraineWindow);
 		});
 		
@@ -352,7 +362,7 @@ function historyWindow(_args){
 		var xhr = Ti.Network.createHTTPClient({
 	    	onload: function() {
 	    		
-	    		var migrainesTableData = [];
+	    		migrainesTableData = [];
 	    		var json = JSON.parse(this.responseText);
 	    		
 	    		for (i = 0; i < json.MIGRAINE.length; i++) {
@@ -394,6 +404,10 @@ function historyWindow(_args){
 	self.addEventListener('open', function(e) {
 		loadMigraineCharts();
 	});
+	
+	this.loadHistory = function(){
+		loadMigraines();
+	};
 	
 	return self;
 	

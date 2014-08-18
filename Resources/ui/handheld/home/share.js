@@ -1,5 +1,6 @@
 function share(_args){
 	
+	var shareTableData = [];
 	var fontFamilyVar = 'Source Sans Pro';
     var fontSizeVar ='16';
     var userid = Ti.App.Properties.getString('userid');
@@ -19,6 +20,29 @@ function share(_args){
 		navBarHidden:false,
 		backgroundColor:'#d7d6d5'
 	}));
+	
+	var shareTable = Ti.UI.createTableView({
+		width:Ti.UI.FILL,
+		height:Ti.UI.SIZE,
+		data:shareTableData,
+   		top:8,
+		right:8,
+		left:8,
+		bottom:8,
+		borderWidth:1,
+		borderColor:'#CCC',
+		borderRadius:2,
+		selectionStyle:'NONE',
+		backgroundColor: '#FFF',
+		editable:true
+	});
+	
+	shareTable.footerView = Ti.UI.createView({
+    	height: 1,
+   		backgroundColor: 'transparent'
+	});
+	
+	self.add(shareTable);
 	
 	return self;
 	

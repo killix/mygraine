@@ -50,7 +50,17 @@
 				fontSize:16,
 				fontFamily:'Source Sans Pro'
 			}
-		}
+		},
+		button: {
+			borderRadius:4,
+			borderWidth:1,
+			height:54,
+			layout:'vertical',
+			font:{
+				fontSize:24,
+				fontFamily:'Source Sans Pro'
+			},
+		},
 	};
 })();
 

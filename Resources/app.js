@@ -19,7 +19,6 @@ var ef = {};
 
 Ti.App.Properties.setString("userid","0");
 Ti.App.Properties.setString("domain","www.sportsuniformsunlimited.com/Mygraine");
-Ti.App.Properties.setString("userid","1");
 // This is a single context application with mutliple windows in a stack
 (function() {
 
@@ -72,7 +71,126 @@ Ti.App.Properties.setString("userid","1");
 	} else {
 		Window = require('ui/handheld/ApplicationWindow');
 	}
-
+	
+	var loginWindow = require('ui/handheld/loginWindow');
 	var ApplicationTabGroup = require('ui/common/ApplicationTabGroup');
-	new ApplicationTabGroup(Window).open();
+	
+	function checkSession(){
+
+		var _db = Ti.Database.open('migraine');
+		var userid = Ti.App.Properties.getString("userid");
+		
+		_db.execute('CREATE TABLE IF NOT EXISTS userLoginInfo (' +
+					'userid INTEGER NOT NULL, ' +
+					'email STRING NOT NULL, ' +
+					'password STRING NOT NULL, ' +
+					'keepLoggedIn BIT NOT NULL, ' +
+					'timestamp_current INTEGER NOT NULL);');
+																
+		var now = Math.round(new Date().getTime() / 1000);
+
+		var getuserid = _db.execute('SELECT userid FROM userLoginInfo WHERE keepLoggedIn = 1 ORDER BY timestamp_current DESC LIMIT 1');
+		if (getuserid.isValidRow()) {
+			userid = getuserid.field(0);	
+			Ti.App.Properties.setString("userid",userid);
+		}
+		Ti.API.info(getuserid.field(0));
+		getuserid.close();
+		
+		var userFound = _db.execute('SELECT COUNT(userid) FROM userLoginInfo WHERE userid = ?',userid);
+
+		if(userFound.field(0) == 1) {							
+			_db.execute('UPDATE userLoginInfo set timestamp_current = ? where userid = ?',now,userid);
+			userFound.close();
+			var userInfo = _db.execute('SELECT email,password FROM userLoginInfo WHERE userid = ?',userid);
+			
+			Ti.App.Properties.setString("username",userInfo.field(0));
+			Ti.App.Properties.setString("password",userInfo.field(1));
+			
+			userInfo.close();
+			_db.close();
+			return false;
+		}	
+		else {
+			userFound.close();
+			_db.close();
+			return true;
+		}
+    };
+    
+    function trackLogin(bypassLogin){
+    	var domain = Ti.App.Properties.getString('domain');
+		var userid = Ti.App.Properties.getString('userid');
+		var badgeCount = Ti.UI.iPhone.getAppBadge();
+		var loginURL = "http://"+domain+"/model/mobile/services/users.cfc?method=logUserLogin";
+		
+		var loginData = {
+		    userid: userid,
+		    bypasslogin:bypassLogin,
+		    badgeCount:badgeCount
+		};
+		
+		var xhr = Ti.Network.createHTTPClient({
+	    	onload: function() { 
+	    		
+	    		var json = JSON.parse(this.responseText);
+	    		var user = json.USERINFO[0];
+
+	    		if(user.USERID > 0){
+		    		new ApplicationTabGroup(Window).open();
+	    		}
+	    		else{
+	    			var loginWindowVar = new loginWindow();
+					loginWindowVar.open();
+					loginWindowVar.addEventListener('close',function(){
+						trackLogin(0);
+						new ApplicationTabGroup(Window).open();
+					});
+	    		}
+	    	},
+	    	onerror: function(e) {
+	    		
+	    	},
+	    	timeout:5000
+	    });
+	    
+	    xhr.open("GET", loginURL);
+		xhr.send(loginData);
+    };
+    
+    function checkConnection(){
+    	if(Titanium.Network.networkType == Titanium.Network.NETWORK_NONE){ 
+    		// that's no network connectivity.
+    		alert('No Internet Connection!');
+    		var loginWindowVar = new loginWindow();
+			loginWindowVar.open();
+			loginWindowVar.addEventListener('close',function(){
+				trackLogin(0);
+				new ApplicationTabGroup(Window).open();
+			});
+    		return false;
+    	}
+    }
+    
+	function manageLogin(){
+		Ti.API.info('test1');
+	    if(checkSession()){
+	    	Ti.API.info('test2');
+	    	checkConnection();
+	    	Ti.API.info('test3');
+			var loginWindowVar = new loginWindow();
+			loginWindowVar.open();
+			loginWindowVar.addEventListener('close',function(){
+				//trackLogin(0);
+				new ApplicationTabGroup(Window).open();
+			});
+	    }
+	    else{Ti.API.info('test4');
+	    	checkConnection();
+	    	trackLogin(1);
+	    }   
+	};
+	
+	manageLogin();
+	
 })();

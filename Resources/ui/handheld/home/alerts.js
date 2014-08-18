@@ -15,19 +15,24 @@ function alertsWindow(){
 		}),
 		fullscreen:false,
 		navBarHidden:false,
-		layout:'vertical'
+		layout:'vertical',
+		backgroundColor:'#d7d6d5'
 	}));
 	
 	var alertsTable = Ti.UI.createTableView({
 		width:Ti.UI.FILL,
 		height:Ti.UI.SIZE,
 		data:alertsTableData,
-   		top:0,
-		right:0,
-		left:0,
-		bottom:0,
+   		top:8,
+		right:8,
+		left:8,
+		bottom:8,
+		borderWidth:1,
+		borderColor:'#CCC',
+		borderRadius:2,
 		selectionStyle:'NONE',
-		backgroundColor: '#FFF'
+		backgroundColor: '#FFF',
+		editable:true
 	});
 	
 	alertsTable.footerView = Ti.UI.createView({
@@ -41,11 +46,26 @@ function alertsWindow(){
 		json = '';
 		alertsTableData = [];
 		
-		for(i=0;i<4;i++){
-			alertsTableData.push(alertRow(json));
-		}	
+		alertsTableData.push(blankAlertRow(json));
 		
 		alertsTable.setData(alertsTableData);
+	}
+	
+	function blankAlertRow(json){
+		var row = Ti.UI.createTableViewRow({
+			title:'',
+			hasChild:false
+		});
+		
+		var alertLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
+		    text: 'You have no alerts at this time!',
+		    left: 15,
+		    height:54
+		}));
+		
+		row.add(alertLabel);
+		
+		return row;
 	}
 	
 	function alertRow(json){

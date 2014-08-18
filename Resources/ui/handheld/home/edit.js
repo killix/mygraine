@@ -22,6 +22,8 @@ function addForm(_args){
 	var triggersCountLabel;
 	var notesField;
 	var migraineid = _args.migraineid;
+	var selectedSeverityValue;
+	var parentObject = _args.parentObject;
 	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
@@ -69,7 +71,7 @@ function addForm(_args){
 		    migraineid: migraineid,
 		    startdatetime: startDateField.value,
 		    enddatetime: endDateField.value,
-		    severity: 1,
+		    severity: selectedSeverityValue,
 		    locations: locationsField.value,
 		    triggers: triggersField.value,
 		    notes:notesField.value,
@@ -94,6 +96,10 @@ function addForm(_args){
 				//startDateTimePickerView.animate(slideUp);
 				
 				self.close();
+				
+				if(parentObject){
+					parentObject.loadHistory();
+				}
 				
 				callLoadingWindow.close();
 	    	},
@@ -363,6 +369,9 @@ function addForm(_args){
 		    value:migraine.STARTDATETIME
 		}));
 		
+		startDateTimePicker.value = new Date(migraine.STARTDATETIME);
+		endDateTimePicker.value = new Date(migraine.ENDDATETIME);
+		
 		startDateField.addEventListener('focus', function(e) {
 			startDateField.blur();
 			endDateTimePickerView.animate(slideDown);
@@ -374,6 +383,9 @@ function addForm(_args){
 		    var hours = parseInt(pickerdatetime.getHours());
 	        var minutes = parseInt(pickerdatetime.getMinutes());
 	        var AMPM = ((pickerdatetime.getHours()>12)?('PM'):'AM');
+	        if(AMPM == 'AM'){
+	        	hours = hours + 12;
+	        }
 	        if(hours > 12){
 	        	hours = hours-12;
 	        }
@@ -431,6 +443,9 @@ function addForm(_args){
 		    var hours = parseInt(pickerdatetime.getHours());
 	        var minutes = parseInt(pickerdatetime.getMinutes());
 	        var AMPM = ((pickerdatetime.getHours()>12)?('PM'):'AM');
+	        if(AMPM == 'AM'){
+	        	hours = hours + 12;
+	        }
 	        if(hours > 12){
 	        	hours = hours-12;
 	        }
@@ -480,23 +495,6 @@ function addForm(_args){
 				var rightVar = 0;
 			}
 			
-			if(i==0){
-				var textVar = 'Mild';
-				var circleColor = '#0F0';
-			}
-			else if(i==1){
-				var textVar = 'Moderate';
-				var circleColor = '#FF0';
-			}
-			else if(i==2){
-				var textVar = 'Severe';
-				var circleColor = '#FF8300';
-			}
-			else{
-				var textVar = 'Very Severe';
-				var circleColor = '#F00';
-			}
-			
 			var containerView = Ti.UI.createView({
 				width:Ti.UI.SIZE,
 				height:100,
@@ -504,46 +502,219 @@ function addForm(_args){
 				layout:'vertical'	
 			});
 			
-			var circleView = Titanium.UI.createButton({
-				width:70,
-				height:70,
-				borderRadius:35,
-				borderWidth:1,
-				borderColor:'#F5F5F5',
-				left:2,
-				right:rightVar,
-				top:2,
-				bottom:2,
-				backgroundColor:circleColor,
-				severityID:i+1,
-				title:i+1,
-				font:{
-			    	fontSize:24,
-					fontFamily:fontFamilyVar
-			   },
-			   color:'#000'
-			});
+			if(i==0){
+				var textVar = 'Mild';
+				var circleColor = '#0F0';
+				circleView1 = Titanium.UI.createButton({
+					width:70,
+					height:70,
+					borderRadius:35,
+					borderWidth:1,
+					borderColor:'#CCC',
+					left:2,
+					right:rightVar,
+					top:2,
+					bottom:2,
+					backgroundColor:'#F5F5F5',
+					severityID:i+1,
+					title:i+1,
+					font:{
+				    	fontSize:24,
+						fontFamily:fontFamilyVar
+				   	},
+				   	color:'#000'
+				});
+				
+				circleView1.addEventListener('touchend', function(e) {
+					circleView2.backgroundColor = '#F5F5F5';
+					circleView3.backgroundColor = '#F5F5F5';
+					circleView4.backgroundColor = '#F5F5F5';
+					var circleColor = '#0F0';
+					circleView1.backgroundColor = circleColor;
+					selectedSeverityValue = 1;
+				});
+				
+				var severityNumberLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
+			    	text:i+1,
+				    font:{
+				    	fontSize:24,
+						fontFamily:fontFamilyVar
+				    }
+				}));
+				
+				//circleView.add(severityNumberLabel);
+				
+				var severityLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
+			    	text:textVar,
+				    font:{
+				    	fontSize:12,
+						fontFamily:fontFamilyVar
+				    }
+				}));
 			
-			var severityNumberLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
-		    	text:i+1,
-			    font:{
-			    	fontSize:24,
-					fontFamily:fontFamilyVar
-			    }
-			}));
+				containerView.add(circleView1);
+				containerView.add(severityLabel);
+			}
+			else if(i==1){
+				var textVar = 'Moderate';
+				var circleColor = '#FF0';
+				circleView2 = Titanium.UI.createButton({
+					width:70,
+					height:70,
+					borderRadius:35,
+					borderWidth:1,
+					borderColor:'#CCC',
+					left:2,
+					right:rightVar,
+					top:2,
+					bottom:2,
+					backgroundColor:'#F5F5F5',
+					severityID:i+1,
+					title:i+1,
+					font:{
+				    	fontSize:24,
+						fontFamily:fontFamilyVar
+				   	},
+				   	color:'#000'
+				});
+				
+				circleView2.addEventListener('touchend', function(e) {
+					circleView1.backgroundColor = '#F5F5F5';
+					circleView3.backgroundColor = '#F5F5F5';
+					circleView4.backgroundColor = '#F5F5F5';
+					var circleColor = '#FF0';
+					this.backgroundColor = circleColor;
+					selectedSeverityValue = 2;
+				});
+				
+				var severityNumberLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
+			    	text:i+1,
+				    font:{
+				    	fontSize:24,
+						fontFamily:fontFamilyVar
+				    }
+				}));
+				
+				//circleView.add(severityNumberLabel);
+				
+				var severityLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
+			    	text:textVar,
+				    font:{
+				    	fontSize:12,
+						fontFamily:fontFamilyVar
+				    }
+				}));
 			
-			//circleView.add(severityNumberLabel);
+				containerView.add(circleView2);
+				containerView.add(severityLabel);
+			}
+			else if(i==2){
+				var textVar = 'Severe';
+				var circleColor = '#FF8300';
+				circleView3 = Titanium.UI.createButton({
+					width:70,
+					height:70,
+					borderRadius:35,
+					borderWidth:1,
+					borderColor:'#CCC',
+					left:2,
+					right:rightVar,
+					top:2,
+					bottom:2,
+					backgroundColor:'#F5F5F5',
+					severityID:i+1,
+					title:i+1,
+					font:{
+				    	fontSize:24,
+						fontFamily:fontFamilyVar
+				   	},
+				   	color:'#000'
+				});
+				
+				circleView3.addEventListener('touchend', function(e) {
+					circleView1.backgroundColor = '#F5F5F5';
+					circleView2.backgroundColor = '#F5F5F5';
+					circleView4.backgroundColor = '#F5F5F5';
+					var circleColor = '#FF8300';
+					this.backgroundColor = circleColor;
+					selectedSeverityValue = 3;
+				});
+				
+				var severityNumberLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
+			    	text:i+1,
+				    font:{
+				    	fontSize:24,
+						fontFamily:fontFamilyVar
+				    }
+				}));
+				
+				//circleView.add(severityNumberLabel);
+				
+				var severityLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
+			    	text:textVar,
+				    font:{
+				    	fontSize:12,
+						fontFamily:fontFamilyVar
+				    }
+				}));
 			
-			var severityLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
-		    	text:textVar,
-			    font:{
-			    	fontSize:12,
-					fontFamily:fontFamilyVar
-			    }
-			}));
-		
-			containerView.add(circleView);
-			containerView.add(severityLabel);
+				containerView.add(circleView3);
+				containerView.add(severityLabel);
+			}
+			else{
+				var textVar = 'Very Severe';
+				var circleColor = '#F00';
+				circleView4 = Titanium.UI.createButton({
+					width:70,
+					height:70,
+					borderRadius:35,
+					borderWidth:1,
+					borderColor:'#CCC',
+					left:2,
+					right:rightVar,
+					top:2,
+					bottom:2,
+					backgroundColor:'#F5F5F5',
+					severityID:i+1,
+					title:i+1,
+					font:{
+				    	fontSize:24,
+						fontFamily:fontFamilyVar
+				   	},
+				   	color:'#000'
+				});
+				
+				circleView4.addEventListener('touchend', function(e) {
+					circleView1.backgroundColor = '#F5F5F5';
+					circleView2.backgroundColor = '#F5F5F5';
+					circleView3.backgroundColor = '#F5F5F5';
+					var circleColor = '#F00';
+					this.backgroundColor = circleColor;
+					selectedSeverityValue = 4;
+				});
+				
+				var severityNumberLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
+			    	text:i+1,
+				    font:{
+				    	fontSize:24,
+						fontFamily:fontFamilyVar
+				    }
+				}));
+				
+				//circleView.add(severityNumberLabel);
+				
+				var severityLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
+			    	text:textVar,
+				    font:{
+				    	fontSize:12,
+						fontFamily:fontFamilyVar
+				    }
+				}));
+			
+				containerView.add(circleView4);
+				containerView.add(severityLabel);
+			}
+			
 			rowView.add(containerView);
 			
 		}
@@ -551,6 +722,39 @@ function addForm(_args){
 		row.add(rowView);
 		
 		addTableData.push(row);
+		
+		if(migraine.SEVERITY == 1){
+			circleView2.backgroundColor = '#F5F5F5';
+			circleView3.backgroundColor = '#F5F5F5';
+			circleView4.backgroundColor = '#F5F5F5';
+			var circleColor = '#0F0';
+			circleView1.backgroundColor = circleColor;
+			selectedSeverityValue = 1;
+		}
+		else if(migraine.SEVERITY == 2){
+			circleView1.backgroundColor = '#F5F5F5';
+			circleView3.backgroundColor = '#F5F5F5';
+			circleView4.backgroundColor = '#F5F5F5';
+			var circleColor = '#FF0';
+			circleView2.backgroundColor = circleColor;
+			selectedSeverityValue = 2;
+		}
+		else if(migraine.SEVERITY == 3){
+			circleView1.backgroundColor = '#F5F5F5';
+			circleView2.backgroundColor = '#F5F5F5';
+			circleView4.backgroundColor = '#F5F5F5';
+			var circleColor = '#FF8300';
+			circleView3.backgroundColor = circleColor;
+			selectedSeverityValue = 3;
+		}
+		else if(migraine.SEVERITY == 4){
+			circleView1.backgroundColor = '#F5F5F5';
+			circleView2.backgroundColor = '#F5F5F5';
+			circleView3.backgroundColor = '#F5F5F5';
+			var circleColor = '#F00';
+			circleView4.backgroundColor = circleColor;
+			selectedSeverityValue = 4;
+		}
 		
 		var painRow = Ti.UI.createTableViewRow({
 			title:'',
@@ -575,8 +779,15 @@ function addForm(_args){
 			value:migraine.LOCATIONS
 		});
 		
+		if(migraine.LOCATIONS.length == 0){
+			var locationLabelCount = 0;	
+		}
+		else{
+			var locationLabelCount = migraine.LOCATIONS.split(",").length;
+		}
+		
 		locationsCountLabel = Ti.UI.createLabel(ef.combine($$.settingsLabel,{
-			text:migraine.LOCATIONS.length,
+			text:locationLabelCount,
 			right:10
 		}));
 		
@@ -607,8 +818,15 @@ function addForm(_args){
 			value:migraine.TRIGGERS
 		});
 		
+		if(migraine.TRIGGERS.length == 0){
+			var triggerLabelCount = 0;	
+		}
+		else{
+			var triggerLabelCount = migraine.TRIGGERS.split(",").length;
+		}
+		
 		triggersCountLabel = Ti.UI.createLabel(ef.combine($$.settingsLabel,{
-			text:migraine.TRIGGERS.length,
+			text:triggerLabelCount,
 			right:10
 		}));
 		
@@ -875,7 +1093,7 @@ function addForm(_args){
 		var xhr = Ti.Network.createHTTPClient({
 	    	onload: function() {
 	    		var json = JSON.parse(this.responseText);
-	    		
+	    		Ti.API.info(json);
 				populateAddTable(json);
 
 				callLoadingWindow.close();

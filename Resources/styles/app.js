@@ -60,6 +60,7 @@
 				fontSize:24,
 				fontFamily:'Source Sans Pro'
 			},
+			top:8
 		},
 	};
 })();

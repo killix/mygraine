@@ -121,7 +121,7 @@ function homeForm(_args){
 	});
 	
 	var nameLabel = Ti.UI.createLabel({
-		text: '-',
+		text:'',
 	    left:8,
 	    right:8,
 	    top:2,
@@ -307,15 +307,13 @@ function homeForm(_args){
 	var otherMigrainesNumber = Ti.UI.createLabel({
 		width:Ti.UI.SIZE,
 		height:Ti.UI.SIZE,
-		text:'6',
+		text:'-',
 		color:'#FFF',
 		font:{
 			fontSize:18,
 	    	fontFamily:fontFamilyVar
 	    }
 	});
-	
-	loadNumber(6,otherMigrainesNumber);
 	
 	var totalMigrainesText = Ti.UI.createLabel({
 		width:Ti.UI.SIZE,
@@ -690,6 +688,7 @@ function homeForm(_args){
 				loadNumber(json.USERINFO.LASTMIGRAINEDAYS,daysSinceNumber);
 				totalMigrainesNumber.text = json.USERINFO.TOTALMIGRAINES;
 				loadNumber(json.USERINFO.TOTALMIGRAINES,totalMigrainesNumber);
+				loadNumber(6,otherMigrainesNumber);
 				alertsNumber.text = json.USERINFO.ALERTSCOUNT;
 				if(json.USERINFO.ALERTSCOUNT > 0){
 					alertsRow.add(alertsNumberCircle);

@@ -10,8 +10,7 @@ function loginWindow() {
 	var self = Ti.UI.createWindow({
 		fullscreen:true,
 		navBarHidden:true,
-		layout:'vertical',
-		backgroundColor:'#d7d6d5'
+		backgroundColor:'#00BFFF'
 	});
 
 	function logMemberIn() {
@@ -120,6 +119,40 @@ function loginWindow() {
 	_db.close();
 	getuserid.close();
 	
+	var row = Ti.UI.createTableViewRow({
+		title:'',
+		height:108
+	});
+	
+	var logoImageView = Ti.UI.createImageView({
+		image:'/images/logo.png',
+		width:Ti.UI.FILL
+	});
+	
+	row.add(logoImageView);
+	
+	loginTableData.push(row);
+	
+	var loginTable = Ti.UI.createTableView({
+		width:Ti.UI.FILL,
+		height:Ti.UI.SIZE,
+		data:loginTableData,
+   		top:8,
+		right:8,
+		left:8,
+		bottom:8,
+		borderWidth:0,
+		separatorStyle: Titanium.UI.iPhone.TableViewSeparatorStyle.NONE,
+		selectionStyle:'NONE',
+		backgroundColor: 'transparent',
+		editable:true,
+		scrollable:false
+	});
+	
+	self.add(loginTable);
+	
+	var loginTableData = [];
+	
 	var row = Ti.UI.createTableViewRow(ef.combine($$.loginRow,{
 		title:''
 	}));
@@ -168,15 +201,15 @@ function loginWindow() {
 	
 	var row = Ti.UI.createTableViewRow({
 		title:'',
-		backgroundColor:'#00BFFF'
+		backgroundColor:'#FFF'
 	});
 	
 	var loginButton = Ti.UI.createButton(ef.combine($$.button,{
 		title:'Login',
-		backgroundColor:'#00BFFF',
-		borderColor:'#00BFFF',
+		backgroundColor:'#FFF',
+		borderColor:'#FFF',
 		width:Ti.UI.FILL,
-		color:'#FFF'
+		color:'#00BFFF'
 	}));
 				
 	loginButton.addEventListener('click', function() {
@@ -191,12 +224,12 @@ function loginWindow() {
 		width:Ti.UI.FILL,
 		height:Ti.UI.SIZE,
 		data:loginTableData,
-   		top:8,
+   		top:124,
 		right:8,
 		left:8,
 		bottom:8,
 		borderWidth:1,
-		borderColor:'#CCC',
+		borderColor:'#FFF',
 		borderRadius:2,
 		selectionStyle:'NONE',
 		backgroundColor: '#FFF',
@@ -210,12 +243,12 @@ function loginWindow() {
 	
 	var row = Ti.UI.createTableViewRow({
 		title:'',
-		backgroundColor:'#3b5998'
+		backgroundColor:'transparent'
 	});
 	
 	Ti.Facebook=Titanium.Facebook = require('facebook');
-    Ti.Facebook.appid = '1';
-    Ti.Facebook.permissions = ['publish_stream']; // Permissions your app needs
+    Ti.Facebook.appid = '763148417059882';
+    Ti.Facebook.permissions = ['publish_stream'];
     Ti.Facebook.forceDialogAuth = true;
     
     var facebookButton = Ti.UI.createButton(ef.combine($$.button,{
@@ -245,7 +278,7 @@ function loginWindow() {
 	
 	var row = Ti.UI.createTableViewRow({
 		title:'',
-		backgroundColor:'#22746B'
+		backgroundColor:'transparent'
 	});
 	
 	var registerButton = Ti.UI.createButton(ef.combine($$.button,{
@@ -266,7 +299,7 @@ function loginWindow() {
 	
 	var row = Ti.UI.createTableViewRow({
 		title:'',
-		backgroundColor:'red'
+		backgroundColor:'transparent'
 	});
 	
 	var passwordHelpButton = Ti.UI.createButton(ef.combine($$.button,{
@@ -286,18 +319,14 @@ function loginWindow() {
 	loginTableData.push(row);
 	
 	var loginTable = Ti.UI.createTableView({
-		width:Ti.UI.FILL,
+		width:'75%',
 		height:Ti.UI.SIZE,
 		data:loginTableData,
-   		top:8,
-		right:8,
-		left:8,
 		bottom:8,
-		borderWidth:1,
-		borderColor:'#CCC',
+		borderWidth:0,
 		borderRadius:2,
 		selectionStyle:'NONE',
-		backgroundColor: '#FFF',
+		backgroundColor: 'transparent',
 		editable:true,
 		scrollable:false,
 		separatorStyle: Titanium.UI.iPhone.TableViewSeparatorStyle.NONE

@@ -173,11 +173,8 @@ Ti.App.Properties.setString("domain","www.sportsuniformsunlimited.com/Mygraine")
     }
     
 	function manageLogin(){
-		Ti.API.info('test1');
 	    if(checkSession()){
-	    	Ti.API.info('test2');
 	    	checkConnection();
-	    	Ti.API.info('test3');
 			var loginWindowVar = new loginWindow();
 			loginWindowVar.open();
 			loginWindowVar.addEventListener('close',function(){
@@ -185,7 +182,7 @@ Ti.App.Properties.setString("domain","www.sportsuniformsunlimited.com/Mygraine")
 				new ApplicationTabGroup(Window).open();
 			});
 	    }
-	    else{Ti.API.info('test4');
+	    else{
 	    	checkConnection();
 	    	trackLogin(1);
 	    }   

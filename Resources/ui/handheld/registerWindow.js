@@ -7,6 +7,7 @@ function settingsForm(_args){
 	var domain = Ti.App.Properties.getString('domain');
 	var loadingWindow = require('/ui/handheld/loadingWindow');
 	var tabbar = _args.tabbar;
+	var loginObject = _args.loginObject;
 	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
@@ -327,109 +328,6 @@ function settingsForm(_args){
 	
 	settingsTableData.push(row);
 	
-	var row = Ti.UI.createTableViewRow({
-		title:'',
-		hasChild:false
-	});
-	
-	var fieldLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
-	    text: 'Country',
-	    left: 15,
-	    height:54
-	}));
-	
-	var countryField = Ti.UI.createTextField(ef.combine($$.settingsField,{
-	    left: 100,
-	    right: 10,
-	    hintText: 'Country',
-	    textAlign: 'right',
-	    borderStyle: Ti.UI.INPUT_BORDERSTYLE_NONE,
-	    height:54,
-	    autocorrect:false,
-	    returnKeyType:Titanium.UI.RETURNKEY_DONE
-	}));
-	
-	row.add(fieldLabel);
-	row.add(countryField);
-	
-	settingsTableData.push(row);
-	
-	var row = Ti.UI.createTableViewRow({
-		title:'',
-		hasChild:false
-	});
-	
-	var fieldLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
-	    text: 'Zip/Postal Code',
-	    left: 15,
-	    height:54
-	}));
-	
-	var zipSpace = Ti.UI.createButton({
-		systemButton:Ti.UI.iPhone.SystemButton.FLEXIBLE_SPACE
-	});
-	
-	var zipDone = Ti.UI.createButton({
-		systemButton:Ti.UI.iPhone.SystemButton.DONE,
-		width:20
-	});
-	
-	zipDone.addEventListener('click', function() {
-		zipField.blur();
-	});
-	
-	var zipToolbar = Ti.UI.iOS.createToolbar({
-		items:[zipSpace,zipDone],
-		width:Ti.UI.FILL,
-		height:43,
-		backgroundColor:'#bbb'
-	});
-	
-	var zipField = Ti.UI.createTextField(ef.combine($$.settingsField,{
-	    left: 100,
-	    right: 10,
-	    hintText: 'Zip/Postal Code',
-	    textAlign: 'right',
-	    borderStyle: Ti.UI.INPUT_BORDERSTYLE_NONE,
-	    height:54,
-	    autocorrect:false,
-	    returnKeyType:Titanium.UI.RETURNKEY_DONE,
-	    keyboardType:Titanium.UI.KEYBOARD_NUMBER_PAD,
-	    keyboardToolbar:zipToolbar
-	}));
-	
-	row.add(fieldLabel);
-	row.add(zipField);
-	
-	settingsTableData.push(row);
-	
-	var row = Ti.UI.createTableViewRow({
-		title:'',
-		hasChild:false
-	});
-	
-	var fieldLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
-	    text: 'Time Zone',
-	    left: 15,
-	    height:54
-	}));
-	
-	var timezoneField = Ti.UI.createTextField(ef.combine($$.settingsField,{
-	    left: 100,
-	    right: 10,
-	    hintText: 'Time Zone',
-	    textAlign: 'right',
-	    borderStyle: Ti.UI.INPUT_BORDERSTYLE_NONE,
-	    height:54,
-	    autocorrect:false,
-	    returnKeyType:Titanium.UI.RETURNKEY_DONE
-	}));
-	
-	row.add(fieldLabel);
-	row.add(timezoneField);
-	
-	settingsTableData.push(row);
-	
 	var settingsTable = Ti.UI.createTableView({
 		width:Ti.UI.FILL,
 		height:Ti.UI.SIZE,
@@ -471,15 +369,14 @@ function settingsForm(_args){
 		    firstname: firstNameField.value,
 		    lastname: lastNameField.value,
 		    gender:genderField.value,
-		    dateofbirth: dobField.value,
-			country: countryField.value,
-			zipcode: zipField.value,
-			timezone: timezoneField.value
+		    dateofbirth: dobField.value
 		};
 
 		var xhr = Ti.Network.createHTTPClient({
 			enableKeepAlive:false,
 	    	onload: function() {
+	    		loginObject.newLogin(emailField.value,passwordField.value);
+	    		self.close();
 				callLoadingWindow.close();
 	    	},
 	    	onerror: function(e) {

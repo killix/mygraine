@@ -8,6 +8,7 @@ function settingsForm(_args){
 	var loadingWindow = require('/ui/handheld/loadingWindow');
 	var tabbar = _args.tabbar;
 	var profileImage = "";
+	var currentLanguageCode = Titanium.Locale.currentLanguage;
 	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
@@ -154,6 +155,18 @@ function settingsForm(_args){
 	});
 	
 	row.add(photoView);
+	
+	var editPhotoText = Ti.UI.createLabel({
+		text:'Edit Profile Photo',
+		font:{
+			fontSize:12,
+			fontFamily:'Source Sans Pro'
+		},
+		width:Ti.UI.FILL,
+		textAlign : Ti.UI.TEXT_ALIGNMENT_CENTER
+	});
+	
+	photoView.add(editPhotoText);
 	
 	var profileImageView = Ti.UI.createImageView({
         width:62,
@@ -646,6 +659,11 @@ function settingsForm(_args){
 				var imageURL = "http://"+domain+"/images/profile/originals/";
 				profileImageView.image = imageURL + image;
 				
+				if(countryField.value.length == 0){
+		    		saveUserLocation();
+		    	}
+		    	saveUserLocalTimeZone();
+		    	
 				callLoadingWindow.close();
 				
 			},
@@ -694,9 +712,7 @@ function settingsForm(_args){
 		    lastname: lastNameField.value,
 		    gender:genderField.value,
 		    dateofbirth: dobField.value,
-			country: countryField.value,
 			zipcode: zipField.value,
-			timezone: timezoneField.value,
 			image:profileImage
 		};
 
@@ -743,6 +759,146 @@ function settingsForm(_args){
 	});
 	
 	self.setLeftNavButton(logoutButton);
+	
+	function saveUserLanguage(){
+		var memberid = Ti.App.Properties.getString('memberid');
+		var saveURL = "http://"+domain+"/model/mobile/services/users.cfc?method=userSetLanguage";
+		var saveData = {
+		    userid: userid,
+		    languageCode:currentLanguageCode
+		};
+
+		var xhr = Ti.Network.createHTTPClient({
+	    	onerror: function(e) {
+	    		Ti.API.info("STATUS: " + this.status);
+		    	Ti.API.info("TEXT:   " + this.responseText);
+		    	Ti.API.info("ERROR:  " + e.error);
+		    	alert('error');
+	    	},
+	    	timeout:5000
+	    });
+
+	    xhr.open("GET", saveURL);
+		xhr.send(saveData);	
+
+	}
+
+	function saveUserLocation(){
+		Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
+		Titanium.Geolocation.distanceFilter = 10;
+		Titanium.Geolocation.purpose = L('settings_location_purpose');
+
+		Titanium.Geolocation.getCurrentPosition(function(e){
+			if (e.error)
+			{
+				return;
+			}
+			 
+			var longitude = e.coords.longitude;
+			var latitude = e.coords.latitude;
+			
+			var userid = Ti.App.Properties.getString('userid');
+			var saveURL = "http://"+domain+"/model/mobile/services/users.cfc?method=userSetLocation";
+			var saveData = {
+				userid: userid,
+			    longitude:longitude,
+			    latitude:latitude
+			};
+
+			var xhr = Ti.Network.createHTTPClient({
+	    	onload: function() {
+	    		var json = JSON.parse(this.responseText);
+	    		var settings = json.SETTINGS[0];
+	    		var	countryLabel = settings.COUNTRYLABEL;	
+				countryField.value = countryLabel;
+	    	},
+		    	timeout:5000
+		   });
+	
+		    xhr.open("GET", saveURL);
+			xhr.send(saveData);				
+		});
+	
+	}
+	
+	function getUserOffset(){
+		var utcTime = new Date();
+		var offset = utcTime.getTimezoneOffset();
+		var hours = 0;
+		var minutes = 0;
+		var sign = "";
+		var UTCCode = utcTime.toUTCString().split(" ").pop();
+
+		if (offset > 0){
+			sign = "-";
+		}else if (offset < 0){
+			sign = "+";
+		}
+		offset = Math.abs(offset);
+
+		hours = Math.floor(offset/60);
+		minutes = offset%60;
+
+		if(hours > 0 && hours < 10){
+			hours = "0"+hours.toString();
+		}
+
+		if (minutes > 0){
+			hours = hours.toString()+":"+minutes.toString();
+		}
+
+		hours = sign+hours.toString();
+
+		return hours;
+	}
+	
+	function getUserTimeZone(){
+		var utcTime = new Date();
+		var utcCode = utcTime.toTimeString().split(" ").pop().replace("(","").replace(")","");
+		
+		return utcCode;
+	}
+
+	function saveUserLocalTimeZone(){
+		var UTCOffset = getUserOffset();
+		var UTCCode = getUserTimeZone();
+		
+		var memberid = Ti.App.Properties.getString('memberid');
+		var saveURL = "http://"+domain+"/model/mobile/services/users.cfc?method=userSetUTCCode";
+		var saveData = {
+			userid: userid,
+		    UTCCode:UTCCode,
+		    UTCOffset:UTCOffset
+		};
+
+		var xhr = Ti.Network.createHTTPClient({
+			onload: function() {
+				var json = JSON.parse(this.responseText);
+	    		var settings = json.USERINFO[0];
+	    		var	timeZoneLabel = settings.TIMEZONE;	
+	    		timezoneField.value = timeZoneLabel;
+			},
+	    	onerror: function(e) {
+	    		Ti.API.info("STATUS: " + this.status);
+		    	Ti.API.info("TEXT:   " + this.responseText);
+		    	Ti.API.info("ERROR:  " + e.error);
+		    	alert('error');
+	    	},
+	    	timeout:5000
+	    });
+
+	    xhr.open("GET", saveURL);
+		xhr.send(saveData);	
+
+	}
+	
+	function resetLocationInfo (country){
+		countryField.text = country;
+	}
+	
+	this.resetLocationInfo = function(country) {
+		resetLocationInfo(country);
+	};
 	
 	return self;
 };

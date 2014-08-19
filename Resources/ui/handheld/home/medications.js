@@ -9,6 +9,7 @@ function medicationWindow(_args){
 	var loadingWindow = require('/ui/handheld/loadingWindow');
 	var userid = Ti.App.Properties.getString('userid');
 	var domain = Ti.App.Properties.getString('domain');
+	var homeObject = _args.parentObject;
 	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
@@ -102,6 +103,10 @@ function medicationWindow(_args){
 	    		var medsTableData = [];
 	    		var json = JSON.parse(this.responseText);
 	    		
+	    		if(json.MEDS.length == 0){
+	    			medsTableData.push(blankMedicationRow());
+	    		}
+	    		
 	    		for (i = 0; i < json.MEDS.length; i++) {
 					medsTableData.push(medRow(json,i));
 				}
@@ -121,6 +126,23 @@ function medicationWindow(_args){
 	    xhr.open("GET", loadURL);
 		xhr.send(loadData);
 
+	}
+	
+	function blankMedicationRow(){
+		var row = Ti.UI.createTableViewRow({
+			title:'',
+			hasChild:false
+		});
+		
+		var medLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
+		    text: 'You have no medications at this time!',
+		    left: 15,
+		    height:54
+		}));
+		
+		row.add(medLabel);
+		
+		return row;
 	}
 	
 	function medRow(json,i){
@@ -166,6 +188,10 @@ function medicationWindow(_args){
 	
 	self.addEventListener('open',function(e){
 		loadMeds();
+	});
+	
+	self.addEventListener('close',function(e){
+		homeObject.loadHistory();
 	});
 	
 	return self;

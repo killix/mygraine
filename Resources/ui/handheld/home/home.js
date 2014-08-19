@@ -12,6 +12,7 @@ function homeForm(_args){
 	var domain = Ti.App.Properties.getString('domain');
 	var medicationsCountLabel;
 	var parentObject = this;
+	var loaded = 0;
 	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
@@ -162,10 +163,22 @@ function homeForm(_args){
 		top:8,
 		bottom:8,
 		right:8,
-		backgroundColor:'transparent',
+		backgroundColor:'#d7d6d5',
 		borderWidth:1,
 		borderColor:'#CCC'
 	});
+	
+	var editPhotoText = Ti.UI.createLabel({
+		text:'Add Profile Photo\n in Settings',
+		font:{
+			fontSize:12,
+			fontFamily:'Source Sans Pro'
+		},
+		width:Ti.UI.FILL,
+		textAlign : Ti.UI.TEXT_ALIGNMENT_CENTER
+	});
+	
+	photoContainerView.add(editPhotoText);
 	
 	var photoImageView = Ti.UI.createImageView({
 		width:Ti.UI.SIZE,
@@ -368,7 +381,7 @@ function homeForm(_args){
 	
 	viewHistoryButton.addEventListener('click', function() {
 		var historyWindow = require('/ui/handheld/home/history');
-		var callHistoryWindow = new historyWindow({tabbar:tabbar,containingTab:self.containingTab});
+		var callHistoryWindow = new historyWindow({tabbar:tabbar,containingTab:self.containingTab,parentObject:parentObject});
 		self.containingTab.open(callHistoryWindow);
 	});
 	
@@ -401,9 +414,30 @@ function homeForm(_args){
 	
 	self.add(calendarTable);
 	
+	function blankRow(){
+		var row = Ti.UI.createTableViewRow({
+			title:'',
+			hasChild:false
+		});
+		
+		var migraineLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
+		    text: 'You have no migraines at this time!',
+		    height:54
+		}));
+		
+		row.add(migraineLabel);
+		
+		return row;
+	}
+	
 	function populateRecentHistory(json){
 		recentHistoryTableData = [];
 		var migraineCount = 0;
+		
+		if(json.MIGRAINE.length == 0){
+			recentHistoryTableData.push(blankRow());
+		}
+		
 		for (i = 0; i < json.MIGRAINE.length; i++) {
 			migraineCount = migraineCount+1;
 			migraine = json.MIGRAINE[i];
@@ -482,7 +516,7 @@ function homeForm(_args){
 			   	},
 			   	top:4,
 			   	bottom:0,
-			   	backgroundColor:'',
+			   	backgroundColor:'transparent',
 			   	migraineid:migraine.MIGRAINEID
 			});
 			
@@ -495,7 +529,7 @@ function homeForm(_args){
 			    	fontFamily:fontFamilyVar
 			   	},
 			   	top:0,
-			   	backgroundColor:'',
+			   	backgroundColor:'transparent',
 			   	migraineid:migraine.MIGRAINEID
 			});
 			
@@ -520,7 +554,7 @@ function homeForm(_args){
 			
 			dayColumn.addEventListener('click', function(e) {
 				var migraineEditWindow = require('/ui/handheld/home/edit');
-				var callEditMigraineWindow = new migraineEditWindow({tabbar:tabbar,containingTab:self.containingTab,migraineid:e.source.migraineid,parentObject:parentObject});
+				var callEditMigraineWindow = new migraineEditWindow({tabbar:tabbar,containingTab:self.containingTab,migraineid:e.source.migraineid,parentObject:parentObject,homeObject:parentObject});
 				self.containingTab.open(callEditMigraineWindow);
 			});
 			
@@ -585,7 +619,7 @@ function homeForm(_args){
 	
 	linkRow.addEventListener('click', function() {
 		var historyWindow = require('/ui/handheld/home/medications');
-		var callHistoryWindow = new historyWindow({containingTab:self.containingTab});
+		var callHistoryWindow = new historyWindow({containingTab:self.containingTab,parentObject:parentObject});
 		self.containingTab.open(callHistoryWindow);
 	});
 	
@@ -677,6 +711,7 @@ function homeForm(_args){
 			
 		var xhr = Ti.Network.createHTTPClient({
 	    	onload: function() {
+
 	    		var json = JSON.parse(this.responseText);
 	    		
 				populateRecentHistory(json);
@@ -708,6 +743,24 @@ function homeForm(_args){
 	    xhr.open("GET", loadURL);
 		xhr.send(loadData);
 	}
+	
+	var updateButton = Titanium.UI.createButton({
+		title:'',
+		color:'#FFF',
+		backgroundImage:'/images/update.png',
+		font:{
+			fontSize:18,
+			fontFamily:fontFamilyVar
+		},
+		width:25,
+		height:25
+	});
+	
+	self.setRightNavButton(updateButton);
+	
+	updateButton.addEventListener('click', function(e) {
+		loadHomeScreen();
+	});
 	
 	self.addEventListener('open',function(e){
 		loadHomeScreen();

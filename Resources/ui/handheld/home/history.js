@@ -319,7 +319,7 @@ function historyWindow(_args){
 		});
 		
 		migraineChart.addEventListener('load', function() {
-			migraineChart.evalJS("testJS()");
+			migraineChart.evalJS("testJS("+userid+")");
 		});
 		
 		row.add(migraineChart);
@@ -365,6 +365,10 @@ function historyWindow(_args){
 	    		migrainesTableData = [];
 	    		var json = JSON.parse(this.responseText);
 	    		
+	    		if(json.MIGRAINE.length == 0){
+	    			migrainesTableData.push(blankRow());
+	    		}
+	    		
 	    		for (i = 0; i < json.MIGRAINE.length; i++) {
 		    		migrainesTableData.push(createRow(json,i));    
 		    	}
@@ -388,6 +392,22 @@ function historyWindow(_args){
 		xhr.send(loadData);	
 	}	
 	
+	function blankRow(){
+		var row = Ti.UI.createTableViewRow({
+			title:'',
+			hasChild:false
+		});
+		
+		var migraineLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
+		    text: 'You have no migraines at this time!',
+		    height:54
+		}));
+		
+		row.add(migraineLabel);
+		
+		return row;
+	}
+	
 	function loadMigraineCharts(){
 	    
 	    var migrainesTableData = [];
@@ -403,6 +423,12 @@ function historyWindow(_args){
 	
 	self.addEventListener('open', function(e) {
 		loadMigraineCharts();
+	});
+	
+	self.addEventListener('close',function(e){
+		if(_args.homeObject){
+			homeObject.loadHistory();
+		}
 	});
 	
 	this.loadHistory = function(){

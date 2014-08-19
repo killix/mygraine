@@ -17,11 +17,14 @@ function addForm(_args){
 	var parentObject = this;
 	var locationsCountLabel;
 	var triggersCountLabel;
+	var medicationsField;
+	var medicationsCountLabel;
 	var circleView1;
 	var circleView2;
 	var circleView3;
 	var circleView4;
 	var selectedSeverityValue;
+	var notesField;
 	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
@@ -72,6 +75,7 @@ function addForm(_args){
 		    severity: selectedSeverityValue,
 		    locations: locationsField.value,
 		    triggers: triggersField.value,
+		    medications: medicationsField.value,
 		    notes:notesField.value,
 		    w_city: cityField.value,
 			w_condition: conditionField.value,
@@ -110,7 +114,7 @@ function addForm(_args){
 				tabbar.setActiveTab(0);
 				
 				var historyWindow = require('/ui/handheld/home/history');
-				var callHistoryWindow = new historyWindow();
+				var callHistoryWindow = new historyWindow({tabbar:tabbar});
 				tabbar.activeTab.open(callHistoryWindow);
 				
 				callLoadingWindow.close();
@@ -786,12 +790,44 @@ function addForm(_args){
 		
 		addTableData.push(triggersRow);
 		
+		var medicationsRow = Ti.UI.createTableViewRow({
+			title:'',
+			hasChild:true
+		});
+		
+		var fieldLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
+		    text: 'Medications',
+		    left: 15,
+		    height:54
+		}));
+		
+		medicationsRow.add(fieldLabel);
+		
+		medicationsRow.addEventListener('click', function() {
+			var medicationsWindow = require('/ui/handheld/home/selectMeds');
+			var callMedicationsWindow = new medicationsWindow({parentObject:parentObject,preSelectedValues:medicationsField.value});
+			self.containingTab.open(callMedicationsWindow);
+		});
+		
+		medicationsField = Ti.UI.createTextField({
+			value:''
+		});
+		
+		medicationsCountLabel = Ti.UI.createLabel(ef.combine($$.settingsLabel,{
+			text:'',
+			right:10
+		}));
+		
+		medicationsRow.add(medicationsCountLabel);
+		
+		addTableData.push(medicationsRow);
+		
 		var notesRow = Ti.UI.createTableViewRow({
 			title:'',
 			hasChild:false
 		});
 		
-		var notesField = Titanium.UI.createTextArea(ef.combine($$.settingsLabel,{
+		notesField = Titanium.UI.createTextArea(ef.combine($$.settingsLabel,{
 		    textAlign:'left',
 		  	value:'Notes',
 		  	width:Ti.UI.FILL,
@@ -1138,6 +1174,15 @@ function addForm(_args){
 	
 	this.populateTriggers = function(selectedValues){
 		populateTriggers(selectedValues);
+	};
+	
+	function populateMedications(selectedValues){
+		medicationsField.value = selectedValues;
+		medicationsCountLabel.text = selectedValues.length;
+	}
+	
+	this.populateMedications = function(selectedValues){
+		populateMedications(selectedValues);
 	};
 	
 	return self;

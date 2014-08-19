@@ -6,6 +6,7 @@ function loginWindow() {
 	var loadingWindow = require('/ui/handheld/loadingWindow');
 	var registerWindow = require('/ui/handheld/registerWindow');
 	var passwordWindow = require('/ui/handheld/passwordWindow');
+	var loginObject = this;
 	
 	var self = Ti.UI.createWindow({
 		fullscreen:true,
@@ -94,7 +95,7 @@ function loginWindow() {
 	}
 	
 	function registerNewMember(){
-		var	callRegisterWindow = new registerWindow({loginWindow:self});
+		var	callRegisterWindow = new registerWindow({loginWindow:self,loginObject:loginObject});
 			callRegisterWindow.openRegister();
 	}
 	
@@ -248,7 +249,7 @@ function loginWindow() {
 	
 	Ti.Facebook=Titanium.Facebook = require('facebook');
     Ti.Facebook.appid = '763148417059882';
-    Ti.Facebook.permissions = ['publish_stream'];
+    Ti.Facebook.permissions = ['publish_stream','email','user_about_me'];
     Ti.Facebook.forceDialogAuth = true;
     
     var facebookButton = Ti.UI.createButton(ef.combine($$.button,{
@@ -262,11 +263,47 @@ function loginWindow() {
     facebookButton.addEventListener('click', function() {
 	    Ti.Facebook.addEventListener('login', function(e) {
 	        if (e.success) {
-	            alert('Logged In');
+	            Ti.API.info(e.data);
+	            Ti.API.info(e.uid);
+	            if(e.data.gender == 'male'){
+	            	var gendertempvar = 'Male';
+	            }
+	            else{
+	            	var gendertempvar = 'Female';
+	            }
+	            //alert('Logged In');
+	            var saveURL = "http://"+domain+"/model/mobile/services/users.cfc?method=createUser";
+				var saveData = {
+				    emailaddress: e.data.email,
+				    password: e.uid,
+				    firstname: e.data.first_name,
+				    lastname: e.data.last_name,
+				    gender: gendertempvar
+				};
+		
+				var xhr = Ti.Network.createHTTPClient({
+					enableKeepAlive:false,
+			    	onload: function() {
+			    		newLogin(e.data.email,e.uid);
+			    		self.close();
+						
+			    	},
+			    	onerror: function(e) {
+			    		alert("STATUS: " + this.status);
+				    	alert("TEXT:   " + this.responseText);
+				    	alert("ERROR:  " + e.error);
+			    	},
+			    	timeout:999999
+			    });
+			    //xhr.setRequestHeader("ContentType", "image/jpeg");
+				//xhr.setRequestHeader("enctype","multipart/form-data");
+			    xhr.open("GET", saveURL);
+				xhr.send(saveData);
+				
 	        } else if (e.error) {
 	            alert(e.error);
 	        } else if (e.cancelled) {
-	            alert("Canceled");
+	            //alert("Canceled");
 	        }
 	    });
     	Ti.Facebook.authorize();
@@ -302,10 +339,8 @@ function loginWindow() {
 		backgroundColor:'transparent'
 	});
 	
-	var passwordHelpButton = Ti.UI.createButton(ef.combine($$.button,{
+	var passwordHelpButton = Ti.UI.createButton(ef.combine($$.textbutton,{
 		title:'Forgot Password',
-		backgroundColor:'red',
-		borderColor:'red',
 		width:Ti.UI.FILL,
 		color:'#FFF'
 	}));
@@ -333,6 +368,16 @@ function loginWindow() {
 	});
 	
 	self.add(loginTable);
+	
+	function newLogin(emailaddress,password){
+		emailField.value = emailaddress;
+		passwordField.value = password;
+		logMemberIn();
+	}
+	
+	this.newLogin = function(emailaddress,password){
+		newLogin(emailaddress,password);
+	};
 	
 	return self;
 };

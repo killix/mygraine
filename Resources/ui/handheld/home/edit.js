@@ -16,7 +16,7 @@ function addForm(_args){
 	var loadingWindow = require('/ui/handheld/loadingWindow');
 	var migraineid = _args.migraineid;
 	var containingTab = _args.containingTab;
-	var parentObject = this;
+	var editObject = this;
 	var locationsField;
 	var locationsCountLabel;
 	var triggersCountLabel;
@@ -24,7 +24,9 @@ function addForm(_args){
 	var migraineid = _args.migraineid;
 	var selectedSeverityValue;
 	var parentObject = _args.parentObject;
-	
+	var medicationsField;
+	var medicationsCountLabel;
+
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
 			text:'Migraine',
@@ -74,6 +76,7 @@ function addForm(_args){
 		    severity: selectedSeverityValue,
 		    locations: locationsField.value,
 		    triggers: triggersField.value,
+		    medications: medicationsField.value,
 		    notes:notesField.value,
 		    w_city: cityField.value,
 			w_condition: conditionField.value,
@@ -771,7 +774,7 @@ function addForm(_args){
 		
 		painRow.addEventListener('click', function() {
 			var painLocationsWindow = require('/ui/handheld/home/painLocations');
-			var callPainLocationsWindow = new painLocationsWindow({parentObject:parentObject,preSelectedValues:locationsField.value});
+			var callPainLocationsWindow = new painLocationsWindow({parentObject:editObject,preSelectedValues:locationsField.value});
 			containingTab.open(callPainLocationsWindow);
 		});
 		
@@ -810,7 +813,7 @@ function addForm(_args){
 		
 		triggersRow.addEventListener('click', function() {
 			var triggersWindow = require('/ui/handheld/home/triggers');
-			var callTriggersWindow = new triggersWindow({parentObject:parentObject,preSelectedValues:triggersField.value});
+			var callTriggersWindow = new triggersWindow({parentObject:editObject,preSelectedValues:triggersField.value});
 			containingTab.open(callTriggersWindow);
 		});
 		
@@ -833,6 +836,45 @@ function addForm(_args){
 		triggersRow.add(triggersCountLabel);
 		
 		addTableData.push(triggersRow);
+		
+		var medicationsRow = Ti.UI.createTableViewRow({
+			title:'',
+			hasChild:true
+		});
+		
+		var fieldLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
+		    text: 'Medications',
+		    left: 15,
+		    height:54
+		}));
+		
+		medicationsRow.add(fieldLabel);
+		
+		medicationsRow.addEventListener('click', function() {
+			var medicationsWindow = require('/ui/handheld/home/selectMeds');
+			var callMedicationsWindow = new medicationsWindow({parentObject:editObject,preSelectedValues:medicationsField.value});
+			containingTab.open(callMedicationsWindow);
+		});
+		
+		medicationsField = Ti.UI.createTextField({
+			value:''
+		});
+		
+		if(migraine.MEDICATIONS.length == 0){
+			var medicationLabelCount = 0;	
+		}
+		else{
+			var medicationLabelCount = migraine.MEDICATIONS.split(",").length;
+		}
+		
+		medicationsCountLabel = Ti.UI.createLabel(ef.combine($$.settingsLabel,{
+			text:medicationLabelCount,
+			right:10
+		}));
+		
+		medicationsRow.add(medicationsCountLabel);
+		
+		addTableData.push(medicationsRow);
 		
 		var notesRow = Ti.UI.createTableViewRow({
 			title:'',
@@ -1130,8 +1172,23 @@ function addForm(_args){
 		populateTriggers(selectedValues);
 	};
 	
+	function populateMedications(selectedValues){
+		medicationsField.value = selectedValues;
+		medicationsCountLabel.text = selectedValues.length;
+	}
+	
+	this.populateMedications = function(selectedValues){
+		populateMedications(selectedValues);
+	};
+	
 	self.addEventListener('open', function(e) {
 		loadMigraine();
+	});
+	
+	self.addEventListener('close', function(e) {
+		if(_args.homeObject){
+			_args.homeObject.loadHistory();
+		}
 	});
 	
 	return self;

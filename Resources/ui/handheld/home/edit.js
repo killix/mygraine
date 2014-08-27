@@ -110,8 +110,8 @@ function addForm(_args){
 	    		alert("STATUS: " + this.status);
 		    	alert("TEXT:   " + this.responseText);
 		    	alert("ERROR:  " + e.error);
-		    	
 		    	callLoadingWindow.close();
+		    	alert(L('error_retrieving_data'));
 	    	},
 	    	timeout:999999
 	    });
@@ -1145,6 +1145,7 @@ function addForm(_args){
 		    	Ti.API.info("TEXT:   " + this.responseText);
 		    	Ti.API.info("ERROR:  " + e.error);
 		    	callLoadingWindow.close();
+		    	alert(L('error_retrieving_data'));
 	    	},
 	    	timeout:5000
 	    });

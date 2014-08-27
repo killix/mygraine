@@ -86,7 +86,7 @@ function loginWindow() {
 		    	Ti.API.info("TEXT:   " + this.responseText);
 		    	Ti.API.info("ERROR:  " + e.error);
 		    	callLoadingWindow.close();
-		    	alert('error');
+		    	alert(L('error_retrieving_data'));
 	    	},
 	    	timeout:5000
 	    });
@@ -301,7 +301,7 @@ function loginWindow() {
 				xhr.send(saveData);
 				
 	        } else if (e.error) {
-	            alert(e.error);
+	            //alert(e.error);
 	        } else if (e.cancelled) {
 	            //alert("Canceled");
 	        }

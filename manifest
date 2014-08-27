@@ -1,8 +1,8 @@
-#appname: migraine
-#publisher: Jim
-#url: http://
-#image: appicon.png
-#appid: com.jim.migraine
-#desc: undefined
-#type: ipad
-#guid: 5a3a7c01-60ab-4306-9048-71b9c5ce603e
+#appname:migraine
+#publisher:Mygraine
+#url:http://www.mygraineapp.com
+#image:appicon.png
+#appid:com.mygraine.v1
+#desc:Mygraine
+#type:ipad
+#guid:5a3a7c01-60ab-4306-9048-71b9c5ce603e

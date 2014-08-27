@@ -123,8 +123,8 @@ function addForm(_args){
 	    		alert("STATUS: " + this.status);
 		    	alert("TEXT:   " + this.responseText);
 		    	alert("ERROR:  " + e.error);
-		    	
 		    	callLoadingWindow.close();
+		    	alert(L('error_retrieving_data'));
 	    	},
 	    	timeout:999999
 	    });
@@ -1080,7 +1080,8 @@ function addForm(_args){
 		        var url ='http://weather.yahooapis.com/forecastrss?w='+ f.data.json.ResultSet.Results.woeid + '&u=f';
 		        var xhr = Ti.Network.createHTTPClient({
 		        	onload: function() {
-			            var weather = this.responseXML;
+		        		var weather = this.responseXML;
+
 		                var city = weather.documentElement.getElementsByTagName("yweather:location").item(0).getAttribute("city");
 		                var temp = weather.documentElement.getElementsByTagName("item").item(0).getElementsByTagName("yweather:condition").item(0).getAttribute("temp");
 		                var tempText = weather.documentElement.getElementsByTagName("item").item(0).getElementsByTagName("yweather:condition").item(0).getAttribute("text");

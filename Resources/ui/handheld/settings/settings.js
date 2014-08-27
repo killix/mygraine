@@ -659,9 +659,9 @@ function settingsForm(_args){
 				var imageURL = "http://"+domain+"/images/profile/originals/";
 				profileImageView.image = imageURL + image;
 				
-				if(countryField.value.length == 0){
+				//if(countryField.value.length == 0){
 		    		saveUserLocation();
-		    	}
+		    	//}
 		    	saveUserLocalTimeZone();
 		    	
 				callLoadingWindow.close();
@@ -672,7 +672,7 @@ function settingsForm(_args){
 		    	Ti.API.info("TEXT:   " + this.responseText);
 		    	Ti.API.info("ERROR:  " + e.error);
 				callLoadingWindow.close();
-		    	alert('error');
+		    	alert(L('error_retrieving_data'));
 	    	},
 	    	timeout:5000
 	    });
@@ -722,10 +722,11 @@ function settingsForm(_args){
 				callLoadingWindow.close();
 	    	},
 	    	onerror: function(e) {
-	    		callLoadingWindow.close();
-	    		alert("STATUS: " + this.status);
-		    	alert("TEXT:   " + this.responseText);
-		    	alert("ERROR:  " + e.error);
+	    		//alert("STATUS: " + this.status);
+		    	//alert("TEXT:   " + this.responseText);
+		    	//alert("ERROR:  " + e.error);
+		    	callLoadingWindow.close();
+		    	alert(L('error_retrieving_data'));
 	    	},
 	    	timeout:999999
 	    });
@@ -746,10 +747,44 @@ function settingsForm(_args){
 		}
 	});
 	
+	function checkTablet() {
+		var platform = Ti.Platform.osname;
+
+		switch (platform) {
+			case 'ipad':
+				return true;
+			case 'android':
+				var psc = Ti.Platform.Android.physicalSizeCategory;
+				var tiAndroid = Ti.Platform.Android;
+				return psc === tiAndroid.PHYSICAL_SIZE_CATEGORY_LARGE || psc === tiAndroid.PHYSICAL_SIZE_CATEGORY_XLARGE;
+			default:
+				return Math.min(Ti.Platform.displayCaps.platformHeight, Ti.Platform.displayCaps.platformWidth) >= 400;
+		}
+	}
+	
 	logoutButton.addEventListener('click', function() {
 		var loginWindow = require('/ui/handheld/loginWindow');
 		var loginWindowVar = new loginWindow();
 			loginWindowVar.open();	
+		
+		tabbar.close();
+		
+		var isTablet = checkTablet();
+
+		var Window;
+		if (isTablet) {
+			Window = require('/ui/tablet/ApplicationWindow');
+		} else {
+			Window = require('/ui/handheld/ApplicationWindow');
+		}
+		
+		var loginWindow = require('/ui/handheld/loginWindow');
+		var ApplicationTabGroup = require('/ui/common/ApplicationTabGroup');
+		
+		loginWindowVar.addEventListener('close',function(){
+			//trackLogin(0);
+			new ApplicationTabGroup(Window).open();
+		});
 		
 		var _db = Ti.Database.open('migraine');
 		var userid = Ti.App.Properties.getString("userid");
@@ -773,7 +808,7 @@ function settingsForm(_args){
 	    		Ti.API.info("STATUS: " + this.status);
 		    	Ti.API.info("TEXT:   " + this.responseText);
 		    	Ti.API.info("ERROR:  " + e.error);
-		    	alert('error');
+		    	alert(L('error_retrieving_data'));
 	    	},
 	    	timeout:5000
 	    });
@@ -806,14 +841,20 @@ function settingsForm(_args){
 			};
 
 			var xhr = Ti.Network.createHTTPClient({
-	    	onload: function() {
-	    		var json = JSON.parse(this.responseText);
-	    		var settings = json.SETTINGS[0];
-	    		var	countryLabel = settings.COUNTRYLABEL;	
-				countryField.value = countryLabel;
-	    	},
-		    	timeout:5000
-		   });
+		    	onload: function() {
+		    		var json = JSON.parse(this.responseText);
+		    		var settings = json.SETTINGS[0];
+		    		var	countryLabel = settings.COUNTRYLABEL;	
+					countryField.value = countryLabel;
+		    	},
+		    	onerror: function(e) {
+		    		Ti.API.info("STATUS: " + this.status);
+			    	Ti.API.info("TEXT:   " + this.responseText);
+			    	Ti.API.info("ERROR:  " + e.error);
+			    	alert(L('error_retrieving_data'));
+		    	},
+			    timeout:5000
+		   	});
 	
 		    xhr.open("GET", saveURL);
 			xhr.send(saveData);				
@@ -882,7 +923,7 @@ function settingsForm(_args){
 	    		Ti.API.info("STATUS: " + this.status);
 		    	Ti.API.info("TEXT:   " + this.responseText);
 		    	Ti.API.info("ERROR:  " + e.error);
-		    	alert('error');
+		    	alert(L('error_retrieving_data'));
 	    	},
 	    	timeout:5000
 	    });

@@ -113,6 +113,7 @@ function medicationsWindow(_args){
 		    	Ti.API.info("TEXT:   " + this.responseText);
 		    	Ti.API.info("ERROR:  " + e.error);
 				callLoadingWindow.close();
+				alert(L('error_retrieving_data'));
 	    	},
 	    	timeout:5000
 	    });

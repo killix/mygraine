@@ -164,8 +164,8 @@ function homeForm(_args){
 		bottom:8,
 		right:8,
 		backgroundColor:'#d7d6d5',
-		borderWidth:1,
-		borderColor:'#CCC'
+		borderWidth:0,
+		borderColor:'transparent'
 	});
 	
 	var editPhotoText = Ti.UI.createLabel({
@@ -486,23 +486,35 @@ function homeForm(_args){
 			});
 			
 			if(migraine.SEVERITY==1){
-				var circleColor = '#0F0';
+				var circleColor1 = '#0F0';
+				var circleColor2 = '#d7d6d5';
+				var circleColor3 = '#d7d6d5';
+				var circleColor4 = '#d7d6d5';
 			}
 			else if(migraine.SEVERITY==2){
-				var circleColor = '#FF0';
+				var circleColor1 = '#d7d6d5';
+				var circleColor2 = '#FF0';
+				var circleColor3 = '#d7d6d5';
+				var circleColor4 = '#d7d6d5';
 			}
 			else if(migraine.SEVERITY==3){
-				var circleColor = '#FF8300';
+				var circleColor1 = '#d7d6d5';
+				var circleColor2 = '#d7d6d5';
+				var circleColor3 = '#FF8300';
+				var circleColor4 = '#d7d6d5';
 			}
 			else{
-				var circleColor = '#F00';
+				var circleColor1 = '#d7d6d5';
+				var circleColor2 = '#d7d6d5';
+				var circleColor3 = '#d7d6d5';
+				var circleColor4 = '#F00';
 			}
 			
 			var redOverlay = Ti.UI.createView({
 				width:Ti.UI.FILL,
 				height:(migraine.SEVERITY)*25+'%',
 				bottom:0,
-				backgroundColor:circleColor,
+				//backgroundColor:circleColor,
 				migraineid:migraine.MIGRAINEID
 			});
 			
@@ -511,10 +523,10 @@ function homeForm(_args){
 				height:Ti.UI.SIZE,
 				color:'#595959',
 				font:{
-					fontSize:14,
+					fontSize:12,
 			    	fontFamily:fontFamilyVar
 			   	},
-			   	top:4,
+			   	top:0,
 			   	bottom:0,
 			   	backgroundColor:'transparent',
 			   	migraineid:migraine.MIGRAINEID
@@ -525,7 +537,7 @@ function homeForm(_args){
 				height:Ti.UI.SIZE,
 				color:'#595959',
 				font:{
-					fontSize:22,
+					fontSize:18,
 			    	fontFamily:fontFamilyVar
 			   	},
 			   	top:0,
@@ -544,10 +556,65 @@ function homeForm(_args){
 			   	migraineid:migraine.MIGRAINEID
 			});
 			
-			dayColumn.add(redOverlay);
+			//dayColumn.add(redOverlay);
 			dayColumn.add(labelView);
 			labelView.add(dayString);
 			labelView.add(dayNumber);
+			
+			var circlesView = Ti.UI.createView({
+				width:Ti.UI.SIZE,
+				height:12,
+				backgroundColor:'transparent',
+				layout:'horizontal',
+				migraineid:migraine.MIGRAINEID
+			});
+			
+			var circleView1 = Ti.UI.createView({
+				width:12,
+				height:12,
+				borderRadius:5,
+				backgroundColor:circleColor1,
+				migraineid:migraine.MIGRAINEID,
+				left:4,
+				right:2
+			});
+			
+			var circleView2 = Ti.UI.createView({
+				width:12,
+				height:12,
+				borderRadius:5,
+				backgroundColor:circleColor2,
+				migraineid:migraine.MIGRAINEID,
+				left:2,
+				right:2
+			});
+			
+			var circleView3 = Ti.UI.createView({
+				width:12,
+				height:12,
+				borderRadius:5,
+				backgroundColor:circleColor3,
+				migraineid:migraine.MIGRAINEID,
+				left:2,
+				right:2
+			});
+			
+			var circleView4 = Ti.UI.createView({
+				width:12,
+				height:12,
+				borderRadius:6,
+				backgroundColor:circleColor4,
+				migraineid:migraine.MIGRAINEID,
+				left:2,
+				right:4
+			});
+			
+			circlesView.add(circleView1);
+			circlesView.add(circleView2);
+			circlesView.add(circleView3);
+			circlesView.add(circleView4);
+			labelView.add(circlesView);
+			
 			//labelView.add(dayMonth);
 			
 			weekRow.add(dayColumn);
@@ -735,6 +802,7 @@ function homeForm(_args){
 	    		Ti.API.info("STATUS: " + this.status);
 		    	Ti.API.info("TEXT:   " + this.responseText);
 		    	Ti.API.info("ERROR:  " + e.error);
+		    	alert(L('error_retrieving_data'));
 		    	callLoadingWindow.close();
 	    	},
 	    	timeout:5000

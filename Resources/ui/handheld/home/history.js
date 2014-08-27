@@ -34,7 +34,7 @@ function historyWindow(_args){
 	});
 	
 	var listButton = Titanium.UI.createButton({
-		title:'List',
+		title:'  List',
 		width:148,
 		height:54,
 		top:8,
@@ -48,7 +48,8 @@ function historyWindow(_args){
 		backgroundColor:'#FFF',
 		borderWidth:1,
 		borderColor:'#CCC',
-		borderRadius:2
+		borderRadius:2,
+		image:'/images/list.png'
 	});
 	
 	listButton.addEventListener('click', function() {
@@ -56,7 +57,7 @@ function historyWindow(_args){
 	});
 	
 	var graphButton = Titanium.UI.createButton({
-		title:'Graph',
+		title:'  Graph',
 		width:148,
 		height:54,
 		top:8,
@@ -70,7 +71,8 @@ function historyWindow(_args){
 		backgroundColor:'#FFF',
 		borderWidth:1,
 		borderColor:'#CCC',
-		borderRadius:2
+		borderRadius:2,
+		image:'/images/graph.png'
 	});
 	
 	graphButton.addEventListener('click', function() {
@@ -203,16 +205,28 @@ function historyWindow(_args){
 		dayColumn.add(calendarView);
 		
 		if(migraine.SEVERITY==1){
-			var circleColor = '#0F0';
+			var circleColor1 = '#0F0';
+			var circleColor2 = '#d7d6d5';
+			var circleColor3 = '#d7d6d5';
+			var circleColor4 = '#d7d6d5';
 		}
 		else if(migraine.SEVERITY==2){
-			var circleColor = '#FF0';
+			var circleColor1 = '#d7d6d5';
+			var circleColor2 = '#FF0';
+			var circleColor3 = '#d7d6d5';
+			var circleColor4 = '#d7d6d5';
 		}
 		else if(migraine.SEVERITY==3){
-			var circleColor = '#FF8300';
+			var circleColor1 = '#d7d6d5';
+			var circleColor2 = '#d7d6d5';
+			var circleColor3 = '#FF8300';
+			var circleColor4 = '#d7d6d5';
 		}
 		else{
-			var circleColor = '#F00';
+			var circleColor1 = '#d7d6d5';
+			var circleColor2 = '#d7d6d5';
+			var circleColor3 = '#d7d6d5';
+			var circleColor4 = '#F00';
 		}
 		
 		var colorOverlay = Ti.UI.createView({
@@ -222,7 +236,7 @@ function historyWindow(_args){
 			bottom:0,
 			right:0,
 			left:0,
-			backgroundColor:circleColor,
+			//backgroundColor:circleColor,
 			borderWidth:1,
 			borderColor:'#CCC',
 			borderRadius:2
@@ -239,7 +253,7 @@ function historyWindow(_args){
 		  borderRadius:2
 		});
 		
-		colorOverlay.add(severityString);
+		//colorOverlay.add(severityString);
 		
 		//dayColumn.add(colorOverlay);
 		
@@ -252,11 +266,43 @@ function historyWindow(_args){
 			layout:'vertical'
 		});
 		
+		var datesInnerColumn = Ti.UI.createView({
+			width:Ti.UI.FILL,
+			height:Ti.UI.SIZE,
+			top:0,
+			left:0,
+			right:0,
+			layout:'horizontal'
+		});
+		
+		datesColumn.add(datesInnerColumn);
+		
+		var datesInnerLeftColumn = Ti.UI.createView({
+			width:Ti.UI.SIZE,
+			height:Ti.UI.SIZE,
+			top:0,
+			left:0,
+			right:0,
+			layout:'vertical'
+		});
+		
+		var datesInnerRightColumn = Ti.UI.createView({
+			width:Ti.UI.SIZE,
+			height:Ti.UI.SIZE,
+			top:0,
+			left:0,
+			right:0,
+			layout:'horizontal'
+		});
+		
+		datesInnerColumn.add(datesInnerLeftColumn);
+		datesInnerColumn.add(datesInnerRightColumn);
+		
 		var dayString = Ti.UI.createLabel({
 			text:migraine.STARTDATETIME,
 			color:'#595959',
 			font:{
-				fontSize:fontSizeVar,
+				fontSize:14,
 		    	fontFamily:fontFamilyVar
 		   },
 		   top:4,
@@ -267,16 +313,72 @@ function historyWindow(_args){
 			text:migraine.DURATION,
 			color:'#595959',
 			font:{
-				fontSize:fontSizeVar,
+				fontSize:14,
 		    	fontFamily:fontFamilyVar
 		   },
 		   top:4,
 		   left:0
 		});
 		
-		datesColumn.add(dayString);
-		datesColumn.add(durationString);
-		datesColumn.add(colorOverlay);
+		datesInnerLeftColumn.add(dayString);
+		datesInnerLeftColumn.add(durationString);
+		//datesColumn.add(colorOverlay);
+		
+		var circlesView = Ti.UI.createView({
+			width:Ti.UI.SIZE,
+			height:30,
+			top:4,
+			backgroundColor:'transparent',
+			layout:'horizontal',
+			migraineid:migraine.MIGRAINEID
+		});
+		
+		var circleView1 = Ti.UI.createView({
+			width:30,
+			height:30,
+			borderRadius:15,
+			backgroundColor:circleColor1,
+			migraineid:migraine.MIGRAINEID,
+			left:8,
+			right:4
+		});
+		
+		var circleView2 = Ti.UI.createView({
+			width:30,
+			height:30,
+			borderRadius:15,
+			backgroundColor:circleColor2,
+			migraineid:migraine.MIGRAINEID,
+			left:4,
+			right:4
+		});
+		
+		var circleView3 = Ti.UI.createView({
+			width:30,
+			height:30,
+			borderRadius:15,
+			backgroundColor:circleColor3,
+			migraineid:migraine.MIGRAINEID,
+			left:4,
+			right:4
+		});
+		
+		var circleView4 = Ti.UI.createView({
+			width:30,
+			height:30,
+			borderRadius:15,
+			backgroundColor:circleColor4,
+			migraineid:migraine.MIGRAINEID,
+			left:4,
+			right:8
+		});
+		
+		circlesView.add(circleView1);
+		circlesView.add(circleView2);
+		circlesView.add(circleView3);
+		circlesView.add(circleView4);
+		datesColumn.add(circlesView);
+		
 		dayColumn.add(datesColumn);
 		
 		row.addEventListener('click', function(e) {
@@ -288,7 +390,7 @@ function historyWindow(_args){
 		return row;
 	}
 	
-	function createChartRow(webViewURL){
+	function createChartRow(webViewURL,color){
 		
 		var row = Ti.UI.createTableViewRow({
 			width:Ti.UI.FILL,
@@ -303,7 +405,7 @@ function historyWindow(_args){
 		var migraineChart = Ti.UI.createWebView({
 			url:webViewURL,
 			width:Ti.UI.FILL,
-			height:Ti.UI.FILL,
+			height:290,
 			layout:'absolute',
 			left:0,
 			right:0,
@@ -311,10 +413,11 @@ function historyWindow(_args){
 			bottom:8,
 			scalesPageToFit:false,
 			disableBounce:true,
-			backgroundColor:'#00BFFF',
-			borderRadius:4,
+			backgroundColor:color,
+			borderRadius:2,
 			borderWidth:1,
-			borderColor:'#CCC'
+			borderColor:'#CCC',
+			touchEnabled:true
 			
 		});
 		
@@ -322,9 +425,9 @@ function historyWindow(_args){
 			migraineChart.evalJS("testJS("+userid+")");
 		});
 		
-		row.add(migraineChart);
+		//row.add(migraineChart);
 		
-		return row;
+		return migraineChart;
 	}
 	
 	var calendarTable = Ti.UI.createTableView({
@@ -339,7 +442,7 @@ function historyWindow(_args){
 		selectionStyle:'NONE',
 		separatorStyle: Titanium.UI.iPhone.TableViewSeparatorStyle.NONE,
     	separatorColor: '#FFF',
-		scrollable:true,
+		scrollable:false,
 		backgroundColor:'transparent'
 	});
 	
@@ -384,7 +487,7 @@ function historyWindow(_args){
 		    	Ti.API.info("TEXT:   " + this.responseText);
 		    	Ti.API.info("ERROR:  " + e.error);
 				callLoadingWindow.close();
-		    	alert('error');
+		    	alert(L('error_retrieving_data'));
 	    	},
 	    	timeout:5000
 	    });
@@ -412,10 +515,40 @@ function historyWindow(_args){
 	    
 	    var migrainesTableData = [];
 	    
+	    var row = Ti.UI.createTableViewRow({
+			width:Ti.UI.FILL,
+			height:385,
+			title:'',
+			top:0,
+			bottom:0,
+			layout:'vertical',
+			backgroundColor:'transparent'
+		});
+	    
+	    var scrollView = Ti.UI.createScrollView({
+  			contentWidth: 'auto',
+  			contentHeight: 'auto',
+  			showVerticalScrollIndicator: true,
+  			showHorizontalScrollIndicator: false,
+  			height: Ti.UI.FILL,
+			width: Ti.UI.FILL,
+			layout:'vertical'
+		});
+	    
 	    var webViewURL = "http://"+domain+"/model/mobile/migraineChart1.cfm";
-		migrainesTableData.push(createChartRow(webViewURL));
+		scrollView.add(createChartRow(webViewURL,'#00BFFF'));
 		var webViewURL = "http://"+domain+"/model/mobile/migraineChart2.cfm";
-		migrainesTableData.push(createChartRow(webViewURL));
+		scrollView.add(createChartRow(webViewURL,'#A8A8A8'));
+		var webViewURL = "http://"+domain+"/model/mobile/migraineChart3.cfm";
+		scrollView.add(createChartRow(webViewURL,'#FFF'));
+		var webViewURL = "http://"+domain+"/model/mobile/migraineChart4.cfm";
+		scrollView.add(createChartRow(webViewURL,'#000080'));
+    	var webViewURL = "http://"+domain+"/model/mobile/migraineChart6.cfm";
+		scrollView.add(createChartRow(webViewURL,'#DAF4F0'));
+		
+    	row.add(scrollView);
+    	
+    	migrainesTableData.push(row);
     	
 		calendarTable.setData(migrainesTableData);
 	    	

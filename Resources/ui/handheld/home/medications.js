@@ -75,6 +75,7 @@ function medicationWindow(_args){
 		    	Ti.API.info("STATUS: " + this.status);
 		    	Ti.API.info("TEXT:   " + this.responseText);
 		    	Ti.API.info("ERROR:  " + e.error);
+		    	alert(L('error_retrieving_data'));
 		    },
 		    timeout:5000
 		});
@@ -120,6 +121,7 @@ function medicationWindow(_args){
 		    	Ti.API.info("TEXT:   " + this.responseText);
 		    	Ti.API.info("ERROR:  " + e.error);
 				callLoadingWindow.close();
+				alert(L('error_retrieving_data'));
 	    	},
 	    	timeout:5000
 	    });

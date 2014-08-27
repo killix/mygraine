@@ -19,21 +19,21 @@ function ApplicationTabGroup(Window) {
 		win3 = new settingsWindow({tabbar:self});
 
 	var tab1 = Ti.UI.createTab({
-		title: L('home'),
+		title: 'Home',
 		window: win1,
 		icon:'/images/tabs/icn_home.png'
 	});
 	win1.containingTab = tab1;
 
 	var tab2 = Ti.UI.createTab({
-		title: L('add'),
+		title: 'Add',
 		window: win2,
 		icon:'/images/tabs/icn_add.png'
 	});
 	win2.containingTab = tab2;
 	
 	var tab3 = Ti.UI.createTab({
-		title: L('settings'),
+		title: 'Settings',
 		window: win3,
 		icon:'/images/tabs/icn_settings.png'
 	});

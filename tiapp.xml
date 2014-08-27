@@ -4,13 +4,13 @@
         <module platform="android">facebook</module>
         <module platform="iphone">facebook</module>
     </modules>
-    <id>com.jim.migraine</id>
+    <id>com.mygraine.v1</id>
     <name>Mygraine</name>
     <version>1.0</version>
-    <publisher>Jim</publisher>
-    <url>http://</url>
-    <description>not specified</description>
-    <copyright>2014 by Jim</copyright>
+    <publisher>Mygraine</publisher>
+    <url>http://www.mygraineapp.com</url>
+    <description>Mygraine</description>
+    <copyright>2014 by Mygraine</copyright>
     <icon>appicon.png</icon>
     <fullscreen>false</fullscreen>
     <navbar-hidden>false</navbar-hidden>

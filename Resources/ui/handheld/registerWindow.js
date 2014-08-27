@@ -376,14 +376,15 @@ function settingsForm(_args){
 			enableKeepAlive:false,
 	    	onload: function() {
 	    		loginObject.newLogin(emailField.value,passwordField.value);
-	    		self.close();
+	    		navWin.close();
 				callLoadingWindow.close();
 	    	},
 	    	onerror: function(e) {
-	    		callLoadingWindow.close();
-	    		alert("STATUS: " + this.status);
-		    	alert("TEXT:   " + this.responseText);
-		    	alert("ERROR:  " + e.error);
+	    		//alert("STATUS: " + this.status);
+		    	//alert("TEXT:   " + this.responseText);
+		    	//alert("ERROR:  " + e.error);
+		    	callLoadingWindow.close();
+		    	alert(L('error_retrieving_data'));
 	    	},
 	    	timeout:999999
 	    });

@@ -35,12 +35,12 @@ function historyWindow(_args){
 	
 	var listButton = Titanium.UI.createButton({
 		title:'  List',
-		width:148,
+		width:96,
 		height:54,
 		top:8,
 		bottom:8,
 		left:4,
-		right:8,
+		right:4,
 		font:{
 			fontSize:18,
 			fontFamily:fontFamilyVar
@@ -58,7 +58,7 @@ function historyWindow(_args){
 	
 	var graphButton = Titanium.UI.createButton({
 		title:'  Graph',
-		width:148,
+		width:96,
 		height:54,
 		top:8,
 		bottom:8,
@@ -76,11 +76,31 @@ function historyWindow(_args){
 	});
 	
 	graphButton.addEventListener('click', function() {
-		loadMigraineCharts();
+		loadMigraineCharts('60','D');
+	});
+	
+	var filterButton = Titanium.UI.createButton({
+		title:'  Filter',
+		width:96,
+		height:54,
+		top:8,
+		bottom:8,
+		left:4,
+		right:8,
+		font:{
+			fontSize:18,
+			fontFamily:fontFamilyVar
+		},
+		backgroundColor:'#FFF',
+		borderWidth:1,
+		borderColor:'#CCC',
+		borderRadius:2,
+		image:'/images/filter.png'
 	});
 	
 	buttonView.add(graphButton);
 	buttonView.add(listButton);
+	buttonView.add(filterButton);
 	
 	self.add(buttonView);
 	
@@ -442,7 +462,7 @@ function historyWindow(_args){
 		selectionStyle:'NONE',
 		separatorStyle: Titanium.UI.iPhone.TableViewSeparatorStyle.NONE,
     	separatorColor: '#FFF',
-		scrollable:false,
+		scrollable:true,
 		backgroundColor:'transparent'
 	});
 	
@@ -511,7 +531,7 @@ function historyWindow(_args){
 		return row;
 	}
 	
-	function loadMigraineCharts(){
+	function loadMigraineCharts(chartNumber,chartUnit){
 	    
 	    var migrainesTableData = [];
 	    
@@ -535,16 +555,116 @@ function historyWindow(_args){
 			layout:'vertical'
 		});
 	    
-	    var webViewURL = "http://"+domain+"/model/mobile/migraineChart1.cfm";
-		scrollView.add(createChartRow(webViewURL,'#00BFFF'));
-		var webViewURL = "http://"+domain+"/model/mobile/migraineChart2.cfm";
-		scrollView.add(createChartRow(webViewURL,'#A8A8A8'));
-		var webViewURL = "http://"+domain+"/model/mobile/migraineChart3.cfm";
-		scrollView.add(createChartRow(webViewURL,'#FFF'));
-		var webViewURL = "http://"+domain+"/model/mobile/migraineChart4.cfm";
-		scrollView.add(createChartRow(webViewURL,'#000080'));
-    	var webViewURL = "http://"+domain+"/model/mobile/migraineChart6.cfm";
-		scrollView.add(createChartRow(webViewURL,'#DAF4F0'));
+	    var webViewURL = "http://"+domain+"/model/mobile/migraineChart1.cfm?userid="+userid+"&chartNumber="+chartNumber+"&chartUnit="+chartUnit;
+				
+		var migraineChart1 = Ti.UI.createWebView({
+			url:webViewURL,
+			width:Ti.UI.FILL,
+			height:290,
+			layout:'absolute',
+			left:0,
+			right:0,
+			top:0,
+			bottom:8,
+			scalesPageToFit:false,
+			disableBounce:true,
+			backgroundColor:'#00BFFF',
+			borderRadius:2,
+			borderWidth:1,
+			borderColor:'#CCC',
+			touchEnabled:true
+			
+		});
+		
+		scrollView.add(migraineChart1);
+		
+		var webViewURL = "http://"+domain+"/model/mobile/migraineChart2.cfm?userid="+userid+"&chartNumber="+chartNumber+"&chartUnit="+chartUnit;
+		var migraineChart2 = Ti.UI.createWebView({
+			url:webViewURL,
+			width:Ti.UI.FILL,
+			height:290,
+			layout:'absolute',
+			left:0,
+			right:0,
+			top:0,
+			bottom:8,
+			scalesPageToFit:false,
+			disableBounce:true,
+			backgroundColor:'#A8A8A8',
+			borderRadius:2,
+			borderWidth:1,
+			borderColor:'#CCC',
+			touchEnabled:true
+			
+		});
+		
+		scrollView.add(migraineChart2);
+
+		var webViewURL = "http://"+domain+"/model/mobile/migraineChart3.cfm?userid="+userid+"&chartNumber="+chartNumber+"&chartUnit="+chartUnit;
+		var migraineChart3 = Ti.UI.createWebView({
+			url:webViewURL,
+			width:Ti.UI.FILL,
+			height:290,
+			layout:'absolute',
+			left:0,
+			right:0,
+			top:0,
+			bottom:8,
+			scalesPageToFit:false,
+			disableBounce:true,
+			backgroundColor:'#FFF',
+			borderRadius:2,
+			borderWidth:1,
+			borderColor:'#CCC',
+			touchEnabled:true
+			
+		});
+		
+		scrollView.add(migraineChart3);
+		
+		var webViewURL = "http://"+domain+"/model/mobile/migraineChart4.cfm?userid="+userid+"&chartNumber="+chartNumber+"&chartUnit="+chartUnit;
+		var migraineChart4 = Ti.UI.createWebView({
+			url:webViewURL,
+			width:Ti.UI.FILL,
+			height:290,
+			layout:'absolute',
+			left:0,
+			right:0,
+			top:0,
+			bottom:8,
+			scalesPageToFit:false,
+			disableBounce:true,
+			backgroundColor:'#000080',
+			borderRadius:2,
+			borderWidth:1,
+			borderColor:'#CCC',
+			touchEnabled:true
+			
+		});
+		
+		scrollView.add(migraineChart4);
+		
+    	var webViewURL = "http://"+domain+"/model/mobile/migraineChart6.cfm?userid="+userid+"&chartNumber="+chartNumber+"&chartUnit="+chartUnit;
+    	var migraineChart6 = Ti.UI.createWebView({
+			url:webViewURL,
+			width:Ti.UI.FILL,
+			height:290,
+			layout:'absolute',
+			left:0,
+			right:0,
+			top:0,
+			bottom:8,
+			scalesPageToFit:false,
+			disableBounce:true,
+			backgroundColor:'#DAF4F0',
+			borderRadius:2,
+			borderWidth:1,
+			borderColor:'#CCC',
+			touchEnabled:true
+			
+		});
+		
+		scrollView.add(migraineChart6);
 		
     	row.add(scrollView);
     	
@@ -555,7 +675,11 @@ function historyWindow(_args){
 	}
 	
 	self.addEventListener('open', function(e) {
-		loadMigraineCharts();
+		
+		setTimeout(function(evt){
+			loadMigraineCharts('60','D');
+    	},1000);
+		
 	});
 	
 	self.addEventListener('close',function(e){

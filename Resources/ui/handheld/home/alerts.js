@@ -1,9 +1,13 @@
 function alertsWindow(){
 	
 	var alertsTableData = [];
+	var json = '';
 	var fontFamilyVar = 'Source Sans Pro';
 	var fontSizeVar ='16';
-	
+	var loadingWindow = require('/ui/handheld/loadingWindow');
+	var userid = Ti.App.Properties.getString('userid');
+	var domain = Ti.App.Properties.getString('domain');
+		
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
 			text:'Alerts',
@@ -46,9 +50,42 @@ function alertsWindow(){
 		json = '';
 		alertsTableData = [];
 		
-		alertsTableData.push(blankAlertRow(json));
+		var loadURL = "http://"+domain+"/model/mobile/services/alerts.cfc?method=getAlertList";
+		var loadData = {
+			userid: userid
+		};
 		
-		alertsTable.setData(alertsTableData);
+		var	callLoadingWindow = new loadingWindow();
+			callLoadingWindow.open();
+			
+		var xhr = Ti.Network.createHTTPClient({
+	    	onload: function() {
+
+	    		var json = JSON.parse(this.responseText);
+	    		
+	    		if(json.ALERTS.length == 0){
+	    			alertsTableData.push(blankAlertRow());
+	    		}
+	    		
+	    		for (i = 0; i < json.ALERTS.length; i++) {
+					alertsTableData.push(alertRow(json,i));
+				}
+				
+				alertsTable.setData(alertsTableData);
+				
+				callLoadingWindow.close();
+			},
+	    	onerror: function(e) {
+	    		Ti.API.info("STATUS: " + this.status);
+		    	Ti.API.info("TEXT:   " + this.responseText);
+		    	Ti.API.info("ERROR:  " + e.error);
+				callLoadingWindow.close();
+				alert(L('error_retrieving_data'));
+	    	},
+	    	timeout:5000
+	    });
+	    xhr.open("GET", loadURL);
+		xhr.send(loadData);
 	}
 	
 	function blankAlertRow(json){
@@ -69,14 +106,19 @@ function alertsWindow(){
 	}
 	
 	function alertRow(json){
+		
+		alert = json.ALERTS[i];
+		
 		var row = Ti.UI.createTableViewRow({
 			title:'',
-			hasChild:true
+			hasChild:true,
+			id:alert.ID,
+			leftImage:"http://"+domain+"/images/icons/"+alert.ICON
 		});
 		
 		var alertLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
-		    text: 'New Migraine Pattern Detected!',
-		    left: 15,
+		    text:alert.ALERT,
+		    left:15,
 		    height:54
 		}));
 		
@@ -85,7 +127,7 @@ function alertsWindow(){
 		return row;
 	}
 	
-	self.addEventListener('focus',function(e){
+	self.addEventListener('open',function(e){
 		loadAlerts();
 	});
 	

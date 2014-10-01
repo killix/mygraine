@@ -236,7 +236,7 @@ function homeForm(_args){
 				clearInterval(timer);
 			}
 			startnumber = startnumber+1;
-		},50);
+		},30);
 	}
 	
 	var daysSinceText = Ti.UI.createLabel({
@@ -302,7 +302,7 @@ function homeForm(_args){
 	
 	profileInfoView.add(totalMigrainesView);
 	
-	var totalMigrainesView = Ti.UI.createView({
+	var averageMigrainesView = Ti.UI.createView({
 		width:Ti.UI.SIZE,
 		height:Ti.UI.SIZE,
 		left:0,
@@ -310,15 +310,15 @@ function homeForm(_args){
 		layout:'horizontal'
 	});
 	
-	var totalMigrainesNumberCircle = Ti.UI.createView({
+	var averageMigrainesNumberCircle = Ti.UI.createView({
 		width:30,
 		height:30,
 		borderRadius:15,
-		backgroundColor:'#FF0',
+		backgroundColor:'',
 		left:0
 	});
 	
-	var otherMigrainesNumber = Ti.UI.createLabel({
+	var averageMigrainesNumber = Ti.UI.createLabel({
 		width:Ti.UI.SIZE,
 		height:Ti.UI.SIZE,
 		text:'-',
@@ -341,11 +341,11 @@ function homeForm(_args){
 	   	left:4
 	});
 	
-	totalMigrainesNumberCircle.add(otherMigrainesNumber);
-	totalMigrainesView.add(totalMigrainesNumberCircle);
-	totalMigrainesView.add(totalMigrainesText);
+	averageMigrainesNumberCircle.add(averageMigrainesNumber);
+	averageMigrainesView.add(averageMigrainesNumberCircle);
+	averageMigrainesView.add(totalMigrainesText);
 	
-	profileInfoView.add(totalMigrainesView);
+	profileInfoView.add(averageMigrainesView);
 	
 	bottomView.add(profileInfoView);
 	
@@ -819,7 +819,23 @@ function homeForm(_args){
 				loadNumber(json.USERINFO.LASTMIGRAINEDAYS,daysSinceNumber);
 				totalMigrainesNumber.text = json.USERINFO.TOTALMIGRAINES;
 				loadNumber(json.USERINFO.TOTALMIGRAINES,totalMigrainesNumber);
-				loadNumber(2,otherMigrainesNumber);
+				
+				if(json.USERINFO.AVERAGEMIGRAINE == 1){
+					averageMigrainesNumberCircle.backgroundColor = '#0F0';
+				}
+				else if(json.USERINFO.AVERAGEMIGRAINE == 2){
+					averageMigrainesNumberCircle.backgroundColor = '#FF0';
+				}
+				else if(json.USERINFO.AVERAGEMIGRAINE == 3){
+					averageMigrainesNumberCircle.backgroundColor = '#FF8300';
+				}
+				else if(json.USERINFO.AVERAGEMIGRAINE == 4){
+					averageMigrainesNumberCircle.backgroundColor = '#F00';
+				}
+				else{
+					averageMigrainesNumberCircle.backgroundColor = '#0F0';
+				}
+				loadNumber(json.USERINFO.AVERAGEMIGRAINE,averageMigrainesNumber);
 				alertsNumber.text = json.USERINFO.ALERTSCOUNT;
 				if(json.USERINFO.ALERTSCOUNT > 0){
 					alertsRow.add(alertsNumberCircle);

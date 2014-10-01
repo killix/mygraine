@@ -201,8 +201,8 @@ function historyWindow(_args){
 		});
 		
 		var calendarView = Ti.UI.createView({
-			width:69,
-			height:69,
+			width:76,
+			height:76,
 			backgroundColor:'#FFF',
 			borderRadius:2,
 			borderColor:'#CCC',
@@ -224,7 +224,7 @@ function historyWindow(_args){
 		var dayNumber = Ti.UI.createLabel({
 			text:migraine.DAYNUMBER,
 			width:Ti.UI.SIZE,
-			color:'#595959',
+			color:'#000',
 			font:{
 				fontSize:46,
 		    	fontFamily:fontFamilyVar
@@ -345,7 +345,7 @@ function historyWindow(_args){
 		
 		var dayString = Ti.UI.createLabel({
 			text:migraine.STARTDATETIME,
-			color:'#595959',
+			color:'#000',
 			font:{
 				fontSize:14,
 		    	fontFamily:fontFamilyVar
@@ -356,7 +356,7 @@ function historyWindow(_args){
 		
 		var durationString = Ti.UI.createLabel({
 			text:migraine.DURATION,
-			color:'#595959',
+			color:'#000',
 			font:{
 				fontSize:14,
 		    	fontFamily:fontFamilyVar
@@ -594,7 +594,7 @@ function historyWindow(_args){
 		var migraineChart1 = Ti.UI.createWebView({
 			url:webViewURL,
 			width:Ti.UI.FILL-8,
-			height:290,
+			height:190,
 			layout:'absolute',
 			left:0,
 			right:0,
@@ -616,7 +616,7 @@ function historyWindow(_args){
 		var migraineChart2 = Ti.UI.createWebView({
 			url:webViewURL,
 			width:Ti.UI.FILL,
-			height:290,
+			height:190,
 			layout:'absolute',
 			left:0,
 			right:0,
@@ -638,7 +638,7 @@ function historyWindow(_args){
 		var migraineChart3 = Ti.UI.createWebView({
 			url:webViewURL,
 			width:Ti.UI.FILL,
-			height:290,
+			height:190,
 			layout:'absolute',
 			left:0,
 			right:0,
@@ -660,7 +660,7 @@ function historyWindow(_args){
 		var migraineChart4 = Ti.UI.createWebView({
 			url:webViewURL,
 			width:Ti.UI.FILL,
-			height:290,
+			height:190,
 			layout:'absolute',
 			left:0,
 			right:0,
@@ -682,7 +682,7 @@ function historyWindow(_args){
     	var migraineChart6 = Ti.UI.createWebView({
 			url:webViewURL,
 			width:Ti.UI.FILL,
-			height:290,
+			height:190,
 			layout:'absolute',
 			left:0,
 			right:0,

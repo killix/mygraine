@@ -117,7 +117,7 @@ function medicationsWindow(_args){
 	    	},
 	    	timeout:5000
 	    });
-	    xhr.open("GET", loadURL);
+	    xhr.open("POST", loadURL);
 		xhr.send(loadData);
 
 	}

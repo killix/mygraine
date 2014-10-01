@@ -390,7 +390,7 @@ function settingsForm(_args){
 	    });
 	    //xhr.setRequestHeader("ContentType", "image/jpeg");
 		//xhr.setRequestHeader("enctype","multipart/form-data");
-	    xhr.open("GET", saveURL);
+	    xhr.open("POST", saveURL);
 		xhr.send(saveData);
 		
 	});

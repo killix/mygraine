@@ -28,42 +28,26 @@ function historyWindow(_args){
 
 	var buttonView = Ti.UI.createView({
 		width:Ti.UI.FILL,
-		height:70,
+		height:62,
 		backgroundColor:'#d7d6d5',
 		layout:'horizontal'
 	});
 	
-	var listButton = Titanium.UI.createButton({
-		title:'  List',
-		width:96,
-		height:54,
-		top:8,
-		bottom:8,
-		left:4,
-		right:4,
-		font:{
-			fontSize:18,
-			fontFamily:fontFamilyVar
-		},
-		backgroundColor:'#FFF',
-		borderWidth:1,
-		borderColor:'#CCC',
-		borderRadius:2,
-		image:'/images/list.png'
-	});
+	var buttonWidth = Ti.Platform.displayCaps.platformWidth*0.333;
 	
-	listButton.addEventListener('click', function() {
-		loadMigraines();
+	var buttonContainer = Ti.UI.createView({
+		width:buttonWidth,
+		height:62
 	});
 	
 	var graphButton = Titanium.UI.createButton({
 		title:'  Graph',
-		width:96,
+		//width:96,
 		height:54,
-		top:8,
-		bottom:8,
-		left:8,
-		right:4,
+		top:4,
+		bottom:4,
+		left:4,
+		right:2,
 		font:{
 			fontSize:18,
 			fontFamily:fontFamilyVar
@@ -72,21 +56,30 @@ function historyWindow(_args){
 		borderWidth:1,
 		borderColor:'#CCC',
 		borderRadius:2,
-		image:'/images/graph.png'
+		image:'/images/graph.png',
+		color:'#000'
 	});
+	
+	buttonContainer.add(graphButton);
+	buttonView.add(buttonContainer);
 	
 	graphButton.addEventListener('click', function() {
 		loadMigraineCharts('60','D');
 	});
 	
-	var filterButton = Titanium.UI.createButton({
-		title:'  Filter',
-		width:96,
+	var buttonContainer = Ti.UI.createView({
+		width:buttonWidth,
+		height:62
+	});
+	
+	var listButton = Titanium.UI.createButton({
+		title:'  List',
+		//width:96,
 		height:54,
-		top:8,
-		bottom:8,
-		left:4,
-		right:8,
+		top:4,
+		bottom:4,
+		left:2,
+		right:2,
 		font:{
 			fontSize:18,
 			fontFamily:fontFamilyVar
@@ -95,12 +88,44 @@ function historyWindow(_args){
 		borderWidth:1,
 		borderColor:'#CCC',
 		borderRadius:2,
-		image:'/images/filter.png'
+		image:'/images/list.png',
+		color:'#000'
 	});
 	
-	buttonView.add(graphButton);
-	buttonView.add(listButton);
-	buttonView.add(filterButton);
+	buttonContainer.add(listButton);
+	buttonView.add(buttonContainer);
+	
+	listButton.addEventListener('click', function() {
+		loadMigraines();
+	});
+	
+	var buttonContainer = Ti.UI.createView({
+		width:buttonWidth,
+		height:62
+	});
+	
+	var filterButton = Titanium.UI.createButton({
+		title:'  Filter',
+		//width:96,
+		height:54,
+		top:4,
+		bottom:4,
+		left:2,
+		right:4,
+		font:{
+			fontSize:18,
+			fontFamily:fontFamilyVar
+		},
+		backgroundColor:'#FFF',
+		borderWidth:1,
+		borderColor:'#CCC',
+		borderRadius:2,
+		image:'/images/filter.png',
+		color:'#000'
+	});
+	
+	buttonContainer.add(filterButton);
+	buttonView.add(buttonContainer);
 	
 	self.add(buttonView);
 	
@@ -168,7 +193,7 @@ function historyWindow(_args){
 		
 		var row = Ti.UI.createTableViewRow({
 			width:Ti.UI.FILL,
-			height:93,
+			height:88,
 			title:'',
 			top:0,
 			layout:'horizontal',
@@ -181,8 +206,8 @@ function historyWindow(_args){
 			backgroundColor:'#FFF',
 			borderRadius:2,
 			borderColor:'#CCC',
-			left:8,
-			right:8
+			left:4,
+			right:4
 		});
 		
 		var dayString = Ti.UI.createLabel({
@@ -212,7 +237,7 @@ function historyWindow(_args){
 		
 		var dayColumn = Ti.UI.createView({
 			width:Ti.UI.FILL,
-			height:85,
+			height:84,
 			top:0,
 			backgroundColor:'#FFF',
 			borderRadius:2,
@@ -282,7 +307,7 @@ function historyWindow(_args){
 			height:Ti.UI.SIZE,
 			top:0,
 			left:85,
-			right:8,
+			right:4,
 			layout:'vertical'
 		});
 		
@@ -359,7 +384,7 @@ function historyWindow(_args){
 			borderRadius:15,
 			backgroundColor:circleColor1,
 			migraineid:migraine.MIGRAINEID,
-			left:8,
+			left:4,
 			right:4
 		});
 		
@@ -390,7 +415,7 @@ function historyWindow(_args){
 			backgroundColor:circleColor4,
 			migraineid:migraine.MIGRAINEID,
 			left:4,
-			right:8
+			right:4
 		});
 		
 		circlesView.add(circleView1);
@@ -430,7 +455,7 @@ function historyWindow(_args){
 			left:0,
 			right:0,
 			top:0,
-			bottom:8,
+			bottom:4,
 			scalesPageToFit:false,
 			disableBounce:true,
 			backgroundColor:color,
@@ -456,8 +481,8 @@ function historyWindow(_args){
 		top:0,
 		bottom:0,
 		top:0,
-		right:8,
-		left:8,
+		right:4,
+		left:4,
 		data:migrainesTableData,
 		selectionStyle:'NONE',
 		separatorStyle: Titanium.UI.iPhone.TableViewSeparatorStyle.NONE,
@@ -511,7 +536,7 @@ function historyWindow(_args){
 	    	},
 	    	timeout:5000
 	    });
-	    xhr.open("GET", loadURL);
+	    xhr.open("POST", loadURL);
 		xhr.send(loadData);	
 	}	
 	
@@ -531,13 +556,18 @@ function historyWindow(_args){
 		return row;
 	}
 	
+	var historyChartsHeight = Ti.Platform.displayCaps.platformHeight - 176;
+	
 	function loadMigraineCharts(chartNumber,chartUnit){
 	    
+	    var	callLoadingWindow = new loadingWindow();
+			callLoadingWindow.open();
+			
 	    var migrainesTableData = [];
 	    
 	    var row = Ti.UI.createTableViewRow({
 			width:Ti.UI.FILL,
-			height:385,
+			height:historyChartsHeight,
 			title:'',
 			top:0,
 			bottom:0,
@@ -546,30 +576,34 @@ function historyWindow(_args){
 		});
 	    
 	    var scrollView = Ti.UI.createScrollView({
-  			contentWidth: 'auto',
+  			contentWidth: Ti.UI.FILL,
   			contentHeight: 'auto',
   			showVerticalScrollIndicator: true,
   			showHorizontalScrollIndicator: false,
   			height: Ti.UI.FILL,
 			width: Ti.UI.FILL,
-			layout:'vertical'
+			layout:'vertical',
+			disableBounce:true,
+			left:0,
+			right:0,
+			backgroundColor:'transparent'
 		});
 	    
 	    var webViewURL = "http://"+domain+"/model/mobile/migraineChart1.cfm?userid="+userid+"&chartNumber="+chartNumber+"&chartUnit="+chartUnit;
 				
 		var migraineChart1 = Ti.UI.createWebView({
 			url:webViewURL,
-			width:Ti.UI.FILL,
+			width:Ti.UI.FILL-8,
 			height:290,
 			layout:'absolute',
 			left:0,
 			right:0,
 			top:0,
-			bottom:8,
+			bottom:4,
 			scalesPageToFit:false,
 			disableBounce:true,
 			backgroundColor:'#00BFFF',
-			borderRadius:2,
+			borderRadius:8,
 			borderWidth:1,
 			borderColor:'#CCC',
 			touchEnabled:true
@@ -587,11 +621,11 @@ function historyWindow(_args){
 			left:0,
 			right:0,
 			top:0,
-			bottom:8,
+			bottom:4,
 			scalesPageToFit:false,
 			disableBounce:true,
 			backgroundColor:'#A8A8A8',
-			borderRadius:2,
+			borderRadius:8,
 			borderWidth:1,
 			borderColor:'#CCC',
 			touchEnabled:true
@@ -609,11 +643,11 @@ function historyWindow(_args){
 			left:0,
 			right:0,
 			top:0,
-			bottom:8,
+			bottom:4,
 			scalesPageToFit:false,
 			disableBounce:true,
 			backgroundColor:'#FFF',
-			borderRadius:2,
+			borderRadius:8,
 			borderWidth:1,
 			borderColor:'#CCC',
 			touchEnabled:true
@@ -631,11 +665,11 @@ function historyWindow(_args){
 			left:0,
 			right:0,
 			top:0,
-			bottom:8,
+			bottom:4,
 			scalesPageToFit:false,
 			disableBounce:true,
 			backgroundColor:'#000080',
-			borderRadius:2,
+			borderRadius:8,
 			borderWidth:1,
 			borderColor:'#CCC',
 			touchEnabled:true
@@ -653,11 +687,11 @@ function historyWindow(_args){
 			left:0,
 			right:0,
 			top:0,
-			bottom:8,
+			bottom:4,
 			scalesPageToFit:false,
 			disableBounce:true,
 			backgroundColor:'#DAF4F0',
-			borderRadius:2,
+			borderRadius:8,
 			borderWidth:1,
 			borderColor:'#CCC',
 			touchEnabled:true
@@ -671,6 +705,8 @@ function historyWindow(_args){
     	migrainesTableData.push(row);
     	
 		calendarTable.setData(migrainesTableData);
+		
+		callLoadingWindow.close();
 	    	
 	}
 	

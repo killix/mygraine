@@ -94,43 +94,44 @@ function homeForm(_args){
 	
 	var profileRow = Ti.UI.createTableViewRow({
 		width:Ti.UI.FILL,
-		height:160,
+		height:152,
 		title:'',
-		top:8,
+		top:4,
 		backgroundColor:'transparent'
 	});
 	
 	var topView = Ti.UI.createView({
 		width:Ti.UI.FILL,
-		height:40,
+		height:32,
 		top:0,
 		layout:'vertical',
 		backgroundColor:'transparent'
 	});
 	
 	var tabView = Ti.UI.createView({
-		left:16,
-		top:8,
+		left:4,
+		top:4,
 		width:Ti.UI.SIZE,
-		height:50,
+		height:38,
 		backgroundColor:'white',
 		borderRadius:2,
 		layout:'vertical',
 		borderWidth:1,
-		borderColor:'#CCC',
-		borderRadius:2
+		borderColor:'#FFF',
+		borderRadius:2,
+		clipMode:Titanium.UI.iOS.CLIP_MODE_ENABLED 
 	});
 	
 	var nameLabel = Ti.UI.createLabel({
 		text:'',
-	    left:8,
-	    right:8,
+	    left:4,
+	    right:4,
 	    top:2,
 	    font:{
 	    	fontSize:22,
 	    	fontFamily:fontFamilyVar
 	    },
-	    color:'#595959',
+	    color:'#000',
 	    width:Ti.UI.SIZE,
 	    height:Ti.UI.SIZE
 	});
@@ -144,25 +145,25 @@ function homeForm(_args){
 		height:Ti.UI.FILL,
 		layout:'horizontal',
 		top:39,
-		right:8,
-		left:8,
+		right:4,
+		left:4,
 		borderWidth:1,
-		borderColor:'#CCC',
+		borderColor:'#FFF',
 		borderRadius:2,
 		backgroundColor:'#FFF'
 	});
 	
-	profileRow.add(bottomView);
 	profileRow.add(topView);
+	profileRow.add(bottomView);
 	
 	var photoContainerView = Ti.UI.createView({
 		width:104,
 		height:104,
 		borderRadius:52,
-		left:8,
-		top:8,
-		bottom:8,
-		right:8,
+		left:4,
+		top:4,
+		bottom:4,
+		right:4,
 		backgroundColor:'#d7d6d5',
 		borderWidth:0,
 		borderColor:'transparent'
@@ -194,9 +195,9 @@ function homeForm(_args){
 	var profileInfoView = Ti.UI.createView({
 		width:Ti.UI.FILL,
 		height:160,
-		top:8,
-		bottom:8,
-		right:8,
+		top:4,
+		bottom:4,
+		right:4,
 		left:-10,
 		layout:'vertical'
 	});
@@ -241,13 +242,13 @@ function homeForm(_args){
 	var daysSinceText = Ti.UI.createLabel({
 		width:Ti.UI.SIZE,
 		height:Ti.UI.SIZE,
-		text:'days since last migraine',
-		color:'#595959',
+		text:'Days Since Last Migraine',
+		color:'#000',
 		font:{
-			fontSize:12,
+			fontSize:14,
 	    	fontFamily:fontFamilyVar
 	   	},
-	   	left:8
+	   	left:4
 	});
 	
 	daysSinceNumberCircle.add(daysSinceNumber);
@@ -286,13 +287,13 @@ function homeForm(_args){
 	var totalMigrainesText = Ti.UI.createLabel({
 		width:Ti.UI.SIZE,
 		height:Ti.UI.SIZE,
-		text:'migraines recorded',
-		color:'#595959',
+		text:'Migraines Recorded',
+		color:'#000',
 		font:{
-			fontSize:12,
+			fontSize:14,
 	    	fontFamily:fontFamilyVar
 	   	},
-	   	left:8
+	   	left:4
 	});
 	
 	totalMigrainesNumberCircle.add(totalMigrainesNumber);
@@ -313,7 +314,7 @@ function homeForm(_args){
 		width:30,
 		height:30,
 		borderRadius:15,
-		backgroundColor:'#00BFFF',
+		backgroundColor:'#FF0',
 		left:0
 	});
 	
@@ -321,7 +322,7 @@ function homeForm(_args){
 		width:Ti.UI.SIZE,
 		height:Ti.UI.SIZE,
 		text:'-',
-		color:'#FFF',
+		color:'#000',
 		font:{
 			fontSize:18,
 	    	fontFamily:fontFamilyVar
@@ -331,13 +332,13 @@ function homeForm(_args){
 	var totalMigrainesText = Ti.UI.createLabel({
 		width:Ti.UI.SIZE,
 		height:Ti.UI.SIZE,
-		text:'blah blah',
-		color:'#595959',
+		text:'Average Severity',
+		color:'#000',
 		font:{
-			fontSize:12,
+			fontSize:14,
 	    	fontFamily:fontFamilyVar
 	   	},
-	   	left:8
+	   	left:4
 	});
 	
 	totalMigrainesNumberCircle.add(otherMigrainesNumber);
@@ -352,13 +353,13 @@ function homeForm(_args){
 	
 	var sectionView = Ti.UI.createView({
 		backgroundColor:'transparent',
-		height:54
+		height:44
 	});
 	
 	var sectionLabel = Titanium.UI.createLabel({
 	    text: 'Recent History',
 	    left: 10,
-	    height:54,
+	    height:44,
 	    font:{
 	    	fontSize:fontSizeVar,
 	    	fontFamily:fontFamilyVar
@@ -370,13 +371,19 @@ function homeForm(_args){
 	
 	var viewHistoryButton = Titanium.UI.createButton({
 		title:'View All',
-		right:10,
-		height:54,
+		right:35,
+		height:44,
 		font:{
 			fontSize:fontSizeVar,
 			fontFamily:fontFamilyVar
 		},
 		color:'#595959'
+	});
+	
+	var viewHistoryImage = Titanium.UI.createImageView({
+		image:'/images/next.png',
+		right:10,
+		height:18
 	});
 	
 	viewHistoryButton.addEventListener('click', function() {
@@ -386,6 +393,7 @@ function homeForm(_args){
 	});
 	
 	sectionView.add(viewHistoryButton);
+	sectionView.add(viewHistoryImage);
 	
 	var section = Ti.UI.createTableViewSection({
 		headerView:sectionView,
@@ -429,6 +437,15 @@ function homeForm(_args){
 		
 		return row;
 	}
+
+    var iPhoneDevice = Titanium.Platform.displayCaps.platformHeight;
+	var recentHistoryTableHeight = Ti.Platform.displayCaps.platformHeight - 422;
+	if(iPhoneDevice < 577){
+		var howManyRowsWidth = 0.50;
+	}
+	else{
+		var howManyRowsWidth = 0.333;
+	}
 	
 	function populateRecentHistory(json){
 		recentHistoryTableData = [];
@@ -446,36 +463,44 @@ function homeForm(_args){
 			
 				var weekRow = Ti.UI.createTableViewRow({
 					width:'100%',
-					height:62,
+					height:recentHistoryTableHeight*howManyRowsWidth,
 					title:'',
-					top:8,
 					layout:'horizontal'
 				});
 			}
 			
 			if(migraineCount==1){
-				var leftVar = 8;
-				var rightVar = 4;
+				var leftVar = 4;
+				var rightVar = 2;
 			}
 			else if(migraineCount==4){
-				var leftVar = 4;
-				var rightVar = 8;
-			}
-			else{
-				var leftVar = 4;
+				var leftVar = 2;
 				var rightVar = 4;
 			}
+			else{
+				var leftVar = 2;
+				var rightVar = 2;
+			}
+			
+			var outerDayColumn = Ti.UI.createView({
+				width:Ti.Platform.displayCaps.platformWidth*0.25,
+				height:Ti.UI.FILL,
+				migraineid:migraine.MIGRAINEID
+			});
+			
 			var dayColumn = Ti.UI.createView({
-				width:70,
-				height:54,
+				//width:Math.round(Ti.Platform.displayCaps.platformWidth*.2229),
+				height:Ti.UI.FILL,
 				right:rightVar,
-				top:0,
+				top:4,
 				left:leftVar,
 				backgroundColor:'#FFF',
 				borderRadius:2,
 				borderColor:'#CCC',
 				migraineid:migraine.MIGRAINEID
 			});
+			
+			outerDayColumn.add(dayColumn);
 			
 			var labelView = Ti.UI.createView({
 				width:Ti.UI.FILL,
@@ -521,7 +546,7 @@ function homeForm(_args){
 			var dayString = Ti.UI.createLabel({
 				text:migraine.DAYOFWEEK,
 				height:Ti.UI.SIZE,
-				color:'#595959',
+				color:'#000',
 				font:{
 					fontSize:12,
 			    	fontFamily:fontFamilyVar
@@ -533,14 +558,15 @@ function homeForm(_args){
 			});
 			
 			var dayNumber = Ti.UI.createLabel({
-				text:migraine.DAYNUMBER,
+				text:migraine.MONTHNUMBER + '/' + migraine.DAYNUMBER,
 				height:Ti.UI.SIZE,
-				color:'#595959',
+				color:'#000',
 				font:{
-					fontSize:18,
+					fontSize:20,
 			    	fontFamily:fontFamilyVar
 			   	},
 			   	top:0,
+			   	bottom:0,
 			   	backgroundColor:'transparent',
 			   	migraineid:migraine.MIGRAINEID
 			});
@@ -563,50 +589,53 @@ function homeForm(_args){
 			
 			var circlesView = Ti.UI.createView({
 				width:Ti.UI.SIZE,
-				height:12,
-				backgroundColor:'transparent',
+				height:Ti.UI.FILL,
+				backgroundColor:'horizontal',
 				layout:'horizontal',
-				migraineid:migraine.MIGRAINEID
+				migraineid:migraine.MIGRAINEID,
+				top:8
 			});
 			
+			var circleWidth = (((Ti.Platform.displayCaps.platformWidth*0.25)-4)*0.25)-4;
+			
 			var circleView1 = Ti.UI.createView({
-				width:12,
-				height:12,
-				borderRadius:5,
+				width:circleWidth,
+				height:circleWidth,
+				borderRadius:circleWidth/2,
 				backgroundColor:circleColor1,
 				migraineid:migraine.MIGRAINEID,
-				left:4,
-				right:2
+				left:2,
+				right:1
 			});
 			
 			var circleView2 = Ti.UI.createView({
-				width:12,
-				height:12,
-				borderRadius:5,
+				width:circleWidth,
+				height:circleWidth,
+				borderRadius:circleWidth/2,
 				backgroundColor:circleColor2,
 				migraineid:migraine.MIGRAINEID,
-				left:2,
-				right:2
+				left:1,
+				right:1
 			});
 			
 			var circleView3 = Ti.UI.createView({
-				width:12,
-				height:12,
-				borderRadius:5,
+				width:circleWidth,
+				height:circleWidth,
+				borderRadius:circleWidth/2,
 				backgroundColor:circleColor3,
 				migraineid:migraine.MIGRAINEID,
-				left:2,
-				right:2
+				left:1,
+				right:1
 			});
 			
 			var circleView4 = Ti.UI.createView({
-				width:12,
-				height:12,
-				borderRadius:6,
+				width:circleWidth,
+				height:circleWidth,
+				borderRadius:circleWidth/2,
 				backgroundColor:circleColor4,
 				migraineid:migraine.MIGRAINEID,
-				left:2,
-				right:4
+				left:1,
+				right:2
 			});
 			
 			circlesView.add(circleView1);
@@ -617,7 +646,7 @@ function homeForm(_args){
 			
 			//labelView.add(dayMonth);
 			
-			weekRow.add(dayColumn);
+			weekRow.add(outerDayColumn);
 			
 			dayColumn.addEventListener('click', function(e) {
 				var migraineEditWindow = require('/ui/handheld/home/edit');
@@ -635,8 +664,8 @@ function homeForm(_args){
 	
 	var recentHistoryTable = Ti.UI.createTableView({
 		width:Ti.UI.FILL,
-		height:Ti.UI.SIZE,
-		top:215,
+		height:recentHistoryTableHeight,
+		top:194,
 		data:recentHistoryTableData,
 		selectionStyle:'NONE',
 		separatorStyle: Titanium.UI.iPhone.TableViewSeparatorStyle.NONE,
@@ -740,7 +769,7 @@ function homeForm(_args){
 	
 	alertsRow.addEventListener('click', function() {
 		var alertsWindow = require('/ui/handheld/home/alerts');
-		var callAlertsWindow = new alertsWindow();
+		var callAlertsWindow = new alertsWindow({containingTab:self.containingTab});
 		self.containingTab.open(callAlertsWindow);
 	});
 	
@@ -749,9 +778,9 @@ function homeForm(_args){
 	var linksTable = Ti.UI.createTableView({
 		width:Ti.UI.FILL,
 		height:Ti.UI.SIZE,
-		bottom:8,
-		right:8,
-		left:8,
+		bottom:4,
+		right:4,
+		left:4,
 		borderWidth:1,
 		borderColor:'#CCC',
 		borderRadius:2,
@@ -790,7 +819,7 @@ function homeForm(_args){
 				loadNumber(json.USERINFO.LASTMIGRAINEDAYS,daysSinceNumber);
 				totalMigrainesNumber.text = json.USERINFO.TOTALMIGRAINES;
 				loadNumber(json.USERINFO.TOTALMIGRAINES,totalMigrainesNumber);
-				loadNumber(6,otherMigrainesNumber);
+				loadNumber(2,otherMigrainesNumber);
 				alertsNumber.text = json.USERINFO.ALERTSCOUNT;
 				if(json.USERINFO.ALERTSCOUNT > 0){
 					alertsRow.add(alertsNumberCircle);
@@ -808,7 +837,7 @@ function homeForm(_args){
 	    	timeout:5000
 	    });
 	    
-	    xhr.open("GET", loadURL);
+	    xhr.open("POST", loadURL);
 		xhr.send(loadData);
 	}
 	

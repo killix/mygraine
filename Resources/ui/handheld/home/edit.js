@@ -117,7 +117,7 @@ function addForm(_args){
 	    });
 	    //xhr.setRequestHeader("ContentType", "image/jpeg");
 		//xhr.setRequestHeader("enctype","multipart/form-data");
-	    xhr.open("GET", saveURL);
+	    xhr.open("POST", saveURL);
 		xhr.send(saveData);
 		
 	});
@@ -1135,7 +1135,7 @@ function addForm(_args){
 		var xhr = Ti.Network.createHTTPClient({
 	    	onload: function() {
 	    		var json = JSON.parse(this.responseText);
-	    		Ti.API.info(json);
+
 				populateAddTable(json);
 
 				callLoadingWindow.close();
@@ -1150,7 +1150,7 @@ function addForm(_args){
 	    	timeout:5000
 	    });
 	    
-	    xhr.open("GET", loadURL);
+	    xhr.open("POST", loadURL);
 		xhr.send(loadData);
 	
 	}

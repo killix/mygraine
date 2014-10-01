@@ -80,7 +80,7 @@ function medicationWindow(_args){
 		    timeout:5000
 		});
 		
-		xhr.open("GET", deleteURL);
+		xhr.open("POST", deleteURL);
 		xhr.send(deleteDATA);
 	});
 	
@@ -125,7 +125,7 @@ function medicationWindow(_args){
 	    	},
 	    	timeout:5000
 	    });
-	    xhr.open("GET", loadURL);
+	    xhr.open("POST", loadURL);
 		xhr.send(loadData);
 
 	}
@@ -154,7 +154,8 @@ function medicationWindow(_args){
 		var row = Ti.UI.createTableViewRow({
 			title:'',
 			hasChild:true,
-			medid:med.ID
+			medid:med.ID,
+			leftImage:'/images/pill.png'
 		});
 		
 		row.addEventListener('click', function(e) {
@@ -166,7 +167,7 @@ function medicationWindow(_args){
 		
 		var medLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
 		    text: med.MEDICATION,
-		    left: 15,
+		    left: 50,
 		    height:54
 		}));
 		

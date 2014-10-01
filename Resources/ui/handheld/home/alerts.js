@@ -1,4 +1,4 @@
-function alertsWindow(){
+function alertsWindow(_args){
 	
 	var alertsTableData = [];
 	var json = '';
@@ -7,7 +7,10 @@ function alertsWindow(){
 	var loadingWindow = require('/ui/handheld/loadingWindow');
 	var userid = Ti.App.Properties.getString('userid');
 	var domain = Ti.App.Properties.getString('domain');
-		
+	var tabbar = _args.tabbar;
+	var containingTab = _args.containingTab;
+	var parentObject = this;
+	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
 			text:'Alerts',
@@ -84,7 +87,7 @@ function alertsWindow(){
 	    	},
 	    	timeout:5000
 	    });
-	    xhr.open("GET", loadURL);
+	    xhr.open("POST", loadURL);
 		xhr.send(loadData);
 	}
 	
@@ -107,22 +110,28 @@ function alertsWindow(){
 	
 	function alertRow(json){
 		
-		alert = json.ALERTS[i];
-		
+		var alertDetails = json.ALERTS[i];
+
 		var row = Ti.UI.createTableViewRow({
 			title:'',
 			hasChild:true,
-			id:alert.ID,
-			leftImage:"http://"+domain+"/images/icons/"+alert.ICON
+			id:alertDetails.ID,
+			leftImage:'/images/'+alertDetails.ICON
 		});
 		
 		var alertLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
-		    text:alert.ALERT,
-		    left:15,
+		    text:alertDetails.ALERT,
+		    left:50,
 		    height:54
 		}));
 		
 		row.add(alertLabel);
+		
+		row.addEventListener('click', function(e) {
+			var migraineAlertWindow = require('/ui/handheld/home/alertDetails');
+			var callMigraineAlertWindow = new migraineAlertWindow({containingTab:containingTab,alertid:e.rowData.id,parentObject:parentObject});
+			containingTab.open(callMigraineAlertWindow);
+		});
 		
 		return row;
 	}

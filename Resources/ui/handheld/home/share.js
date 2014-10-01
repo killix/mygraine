@@ -155,7 +155,7 @@ function share(_args){
 	    });
 	    //xhr.setRequestHeader("ContentType", "image/jpeg");
 		//xhr.setRequestHeader("enctype","multipart/form-data");
-	    xhr.open("GET", sendURL);
+	    xhr.open("POST", sendURL);
 		xhr.send(sendData);
 		
 	});

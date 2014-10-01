@@ -94,7 +94,7 @@ Ti.App.Properties.setString("domain","www.sportsuniformsunlimited.com/Mygraine")
 			userid = getuserid.field(0);	
 			Ti.App.Properties.setString("userid",userid);
 		}
-		Ti.API.info(getuserid.field(0));
+
 		getuserid.close();
 		
 		var userFound = _db.execute('SELECT COUNT(userid) FROM userLoginInfo WHERE userid = ?',userid);
@@ -154,7 +154,7 @@ Ti.App.Properties.setString("domain","www.sportsuniformsunlimited.com/Mygraine")
 	    	timeout:5000
 	    });
 	    
-	    xhr.open("GET", loginURL);
+	    xhr.open("POST", loginURL);
 		xhr.send(loginData);
     };
     

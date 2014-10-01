@@ -209,7 +209,7 @@ function main(_args){
 	    });
 	
 		var getCountriesURL = "http://"+domain+"/model/mobileServices/settings.cfc?method=getCountries";
-	    xhr.open("GET", getCountriesURL);
+	    xhr.open("POST", getCountriesURL);
 		xhr.send();
 }
 
@@ -319,7 +319,7 @@ function main(_args){
 	    });
 	    xhr.setRequestHeader("ContentType", "image/jpeg");
 		xhr.setRequestHeader("enctype","multipart/form-data");
-	    xhr.open("GET", saveURL);
+	    xhr.open("POST", saveURL);
 		xhr.send(saveData);
 	});
 	
@@ -400,7 +400,7 @@ function main(_args){
 	    	},
 	    	timeout:5000
 	    });
-	    xhr.open("GET", loadURL);
+	    xhr.open("POST", loadURL);
 		xhr.send(loadData);
 	}
 
@@ -442,7 +442,7 @@ function main(_args){
 	    	},
 	    	timeout:5000
 	    });
-	    xhr.open("GET", loadURL);
+	    xhr.open("POST", loadURL);
 		xhr.send();
 	}
 	

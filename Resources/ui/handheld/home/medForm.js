@@ -95,7 +95,7 @@ function medicationWindow(_args){
 	    	timeout:5000
 	    });
 	    
-	    xhr.open("GET", loadURL);
+	    xhr.open("POST", loadURL);
 		xhr.send(loadData);
 	
 	}
@@ -651,7 +651,7 @@ function medicationWindow(_args){
 	    	timeout:5000
 	    });
 	    
-	    xhr.open("GET", saveURL);
+	    xhr.open("POST", saveURL);
 		xhr.send(saveData);
 	});
 	

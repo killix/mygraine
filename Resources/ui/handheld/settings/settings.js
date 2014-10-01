@@ -144,14 +144,14 @@ function settingsForm(_args){
 	});
 	
 	var photoView = Ti.UI.createView({
-		width:62,
-		height:82,
-		borderRadius:2,
-		left:8,
+		width:104,
+		height:104,
+		borderRadius:52,
 		top:8,
 		bottom:8,
-		right:8,
-		backgroundColor:'#d7d6d5'
+		backgroundColor:'#d7d6d5',
+		borderWidth:0,
+		borderColor:'transparent'
 	});
 	
 	row.add(photoView);
@@ -169,8 +169,8 @@ function settingsForm(_args){
 	photoView.add(editPhotoText);
 	
 	var profileImageView = Ti.UI.createImageView({
-        width:62,
-		height:82,
+        width:Ti.UI.SIZE,
+		height:140,
 		image:''
 	});
 	
@@ -676,7 +676,7 @@ function settingsForm(_args){
 	    	},
 	    	timeout:5000
 	    });
-	    xhr.open("GET", loadURL);
+	    xhr.open("POST", loadURL);
 		xhr.send(loadData);	
 	}	
 	
@@ -732,7 +732,7 @@ function settingsForm(_args){
 	    });
 	    xhr.setRequestHeader("ContentType", "image/jpeg");
 		xhr.setRequestHeader("enctype","multipart/form-data");
-	    xhr.open("GET", saveURL);
+	    xhr.open("POST", saveURL);
 		xhr.send(saveData);
 		
 	});
@@ -813,7 +813,7 @@ function settingsForm(_args){
 	    	timeout:5000
 	    });
 
-	    xhr.open("GET", saveURL);
+	    xhr.open("POST", saveURL);
 		xhr.send(saveData);	
 
 	}
@@ -856,7 +856,7 @@ function settingsForm(_args){
 			    timeout:5000
 		   	});
 	
-		    xhr.open("GET", saveURL);
+		    xhr.open("POST", saveURL);
 			xhr.send(saveData);				
 		});
 	
@@ -928,7 +928,7 @@ function settingsForm(_args){
 	    	timeout:5000
 	    });
 
-	    xhr.open("GET", saveURL);
+	    xhr.open("POST", saveURL);
 		xhr.send(saveData);	
 
 	}

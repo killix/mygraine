@@ -27,7 +27,7 @@ function loginWindow() {
 			return false;
 		}
 		//Login code will go here
-		var _db = Ti.Database.open('migraine');
+		//var _db = Ti.Database.open('migraine');
 		var	callLoadingWindow = new loadingWindow();
 			callLoadingWindow.open();
 
@@ -36,7 +36,7 @@ function loginWindow() {
 			emailAddress: emailField.value,
 		    password: passwordField.value
 		};
-		
+
 		var xhr = Ti.Network.createHTTPClient({
 	    	onload: function() {
 	    		
@@ -79,7 +79,7 @@ function loginWindow() {
 			
 				_db.close();
 				callLoadingWindow.close();
-				self.close();	
+				self.close();
 	    	},
 	    	onerror: function(e) {
 	    		Ti.API.info("STATUS: " + this.status);
@@ -87,10 +87,10 @@ function loginWindow() {
 		    	Ti.API.info("ERROR:  " + e.error);
 		    	callLoadingWindow.close();
 		    	alert(L('error_retrieving_data'));
-	    	},
-	    	timeout:5000
+	    	}
 	    });
-	    xhr.open("GET", loginURL);
+
+	    xhr.open("POST", loginURL, true);
 		xhr.send(loginData);
 	}
 	
@@ -289,9 +289,9 @@ function loginWindow() {
 						
 			    	},
 			    	onerror: function(e) {
-			    		alert("STATUS: " + this.status);
-				    	alert("TEXT:   " + this.responseText);
-				    	alert("ERROR:  " + e.error);
+			    		//alert("STATUS: " + this.status);
+				    	//alert("TEXT:   " + this.responseText);
+				    	//alert("ERROR:  " + e.error);
 			    	},
 			    	timeout:999999
 			    });
@@ -351,7 +351,7 @@ function loginWindow() {
 	
 	row.add(passwordHelpButton);
 	
-	loginTableData.push(row);
+	//loginTableData.push(row);
 	
 	var loginTable = Ti.UI.createTableView({
 		width:'75%',

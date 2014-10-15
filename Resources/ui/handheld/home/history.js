@@ -33,7 +33,7 @@ function historyWindow(_args){
 		layout:'horizontal'
 	});
 	
-	var buttonWidth = Ti.Platform.displayCaps.platformWidth*0.333;
+	var buttonWidth = Ti.Platform.displayCaps.platformWidth*0.5;
 	
 	var buttonContainer = Ti.UI.createView({
 		width:buttonWidth,
@@ -124,7 +124,7 @@ function historyWindow(_args){
 		color:'#000'
 	});
 	
-	buttonContainer.add(filterButton);
+	//buttonContainer.add(filterButton);
 	buttonView.add(buttonContainer);
 	
 	self.add(buttonView);
@@ -583,7 +583,7 @@ function historyWindow(_args){
   			height: Ti.UI.FILL,
 			width: Ti.UI.FILL,
 			layout:'vertical',
-			disableBounce:true,
+			disableBounce:false,
 			left:0,
 			right:0,
 			backgroundColor:'transparent'

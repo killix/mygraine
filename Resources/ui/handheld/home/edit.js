@@ -26,7 +26,8 @@ function addForm(_args){
 	var parentObject = _args.parentObject;
 	var medicationsField;
 	var medicationsCountLabel;
-
+	var TiCircularProgress = require('de.marcelpociot.circularprogress');
+	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
 			text:'Migraine',
@@ -100,9 +101,11 @@ function addForm(_args){
 				
 				self.close();
 				
+				/*
 				if(parentObject){
 					parentObject.loadHistory();
 				}
+				*/
 				
 				callLoadingWindow.close();
 	    	},
@@ -485,7 +488,7 @@ function addForm(_args){
 		
 		var rowView = Ti.UI.createView({
 			width:Ti.UI.SIZE,
-			height:100,
+			height:118,
 			layout:'horizontal',
 			top:10
 		});
@@ -500,24 +503,27 @@ function addForm(_args){
 			
 			var containerView = Ti.UI.createView({
 				width:Ti.UI.SIZE,
-				height:100,
+				height:118,
 				top:0,
 				layout:'vertical'	
 			});
+			
+			var progressCircleSize = ((Ti.Platform.displayCaps.platformWidth-20)*0.25);
+			var progressButtonCircleSize = progressCircleSize-(progressCircleSize*0.23);
 			
 			if(i==0){
 				var textVar = 'Mild';
 				var circleColor = '#0F0';
 				circleView1 = Titanium.UI.createButton({
-					width:70,
-					height:70,
-					borderRadius:35,
-					borderWidth:1,
-					borderColor:'#CCC',
-					left:2,
-					right:rightVar,
-					top:2,
-					bottom:2,
+					width:progressButtonCircleSize,
+					height:progressButtonCircleSize,
+					borderRadius:progressButtonCircleSize/2,
+					//borderWidth:1,
+					//borderColor:'#CCC',
+					//left:2,
+					//right:rightVar,
+					//top:2,
+					//bottom:2,
 					backgroundColor:'#F5F5F5',
 					severityID:i+1,
 					title:i+1,
@@ -555,22 +561,41 @@ function addForm(_args){
 				    }
 				}));
 			
-				containerView.add(circleView1);
+				var progressCircleView1 = TiCircularProgress.createProgressView({
+				    height: progressCircleSize,
+				    width: progressCircleSize,
+				    roundedCorners: true,
+				    progress: '0.25',
+				    progressTintColor: circleColor,
+				    trackTintColor: circleColor,
+				    animatedProgress: true,
+				    thicknessRatio: 0.20
+				});
+				
+				var circleContainerView = Ti.UI.createView({
+					height: progressCircleSize,
+				    width: progressCircleSize,
+				});
+				
+				circleContainerView.add(progressCircleView1);
+				circleContainerView.add(circleView1);
+				
+				containerView.add(circleContainerView);
 				containerView.add(severityLabel);
 			}
 			else if(i==1){
 				var textVar = 'Moderate';
 				var circleColor = '#FF0';
 				circleView2 = Titanium.UI.createButton({
-					width:70,
-					height:70,
-					borderRadius:35,
-					borderWidth:1,
-					borderColor:'#CCC',
-					left:2,
-					right:rightVar,
-					top:2,
-					bottom:2,
+					width:progressButtonCircleSize,
+					height:progressButtonCircleSize,
+					borderRadius:progressButtonCircleSize/2,
+					//borderWidth:1,
+					//borderColor:'#CCC',
+					//left:2,
+					//right:rightVar,
+					//top:2,
+					//bottom:2,
 					backgroundColor:'#F5F5F5',
 					severityID:i+1,
 					title:i+1,
@@ -608,22 +633,41 @@ function addForm(_args){
 				    }
 				}));
 			
-				containerView.add(circleView2);
+				var progressCircleView2 = TiCircularProgress.createProgressView({
+				    height: progressCircleSize,
+				    width: progressCircleSize,
+				    roundedCorners: true,
+				    progress: '0.5',
+				    progressTintColor: circleColor,
+				    trackTintColor: circleColor,
+				    animatedProgress: true,
+				    thicknessRatio: 0.20
+				});
+				
+				var circleContainerView = Ti.UI.createView({
+					height: progressCircleSize,
+				    width: progressCircleSize,
+				});
+				
+				circleContainerView.add(progressCircleView2);
+				circleContainerView.add(circleView2);
+				
+				containerView.add(circleContainerView);
 				containerView.add(severityLabel);
 			}
 			else if(i==2){
 				var textVar = 'Severe';
 				var circleColor = '#FF8300';
 				circleView3 = Titanium.UI.createButton({
-					width:70,
-					height:70,
-					borderRadius:35,
-					borderWidth:1,
-					borderColor:'#CCC',
-					left:2,
-					right:rightVar,
-					top:2,
-					bottom:2,
+					width:progressButtonCircleSize,
+					height:progressButtonCircleSize,
+					borderRadius:progressButtonCircleSize/2,
+					//borderWidth:1,
+					//borderColor:'#CCC',
+					//left:2,
+					//right:rightVar,
+					//top:2,
+					//bottom:2,
 					backgroundColor:'#F5F5F5',
 					severityID:i+1,
 					title:i+1,
@@ -661,22 +705,41 @@ function addForm(_args){
 				    }
 				}));
 			
-				containerView.add(circleView3);
+				var progressCircleView3 = TiCircularProgress.createProgressView({
+				    height: progressCircleSize,
+				    width: progressCircleSize,
+				    roundedCorners: true,
+				    progress: '0.75',
+				    progressTintColor: circleColor,
+				    trackTintColor: circleColor,
+				    animatedProgress: true,
+				    thicknessRatio: 0.20
+				});
+				
+				var circleContainerView = Ti.UI.createView({
+					height: progressCircleSize,
+				    width: progressCircleSize,
+				});
+				
+				circleContainerView.add(progressCircleView3);
+				circleContainerView.add(circleView3);
+				
+				containerView.add(circleContainerView);
 				containerView.add(severityLabel);
 			}
 			else{
 				var textVar = 'Very Severe';
 				var circleColor = '#F00';
 				circleView4 = Titanium.UI.createButton({
-					width:70,
-					height:70,
-					borderRadius:35,
-					borderWidth:1,
-					borderColor:'#CCC',
-					left:2,
-					right:rightVar,
-					top:2,
-					bottom:2,
+					width:progressButtonCircleSize,
+					height:progressButtonCircleSize,
+					borderRadius:progressButtonCircleSize/2,
+					//borderWidth:1,
+					//borderColor:'#CCC',
+					//left:2,
+					//right:rightVar,
+					//top:2,
+					//bottom:2,
 					backgroundColor:'#F5F5F5',
 					severityID:i+1,
 					title:i+1,
@@ -714,7 +777,26 @@ function addForm(_args){
 				    }
 				}));
 			
-				containerView.add(circleView4);
+				var progressCircleView4 = TiCircularProgress.createProgressView({
+				    height: progressCircleSize,
+				    width: progressCircleSize,
+				    roundedCorners: true,
+				    progress: '1.0',
+				    progressTintColor: circleColor,
+				    trackTintColor: circleColor,
+				    animatedProgress: true,
+				    thicknessRatio: 0.20
+				});
+				
+				var circleContainerView = Ti.UI.createView({
+					height: progressCircleSize,
+				    width: progressCircleSize,
+				});
+				
+				circleContainerView.add(progressCircleView4);
+				circleContainerView.add(circleView4);
+				
+				containerView.add(circleContainerView);
 				containerView.add(severityLabel);
 			}
 			

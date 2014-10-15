@@ -9,7 +9,9 @@ function settingsForm(_args){
 	var tabbar = _args.tabbar;
 	var profileImage = "";
 	var currentLanguageCode = Titanium.Locale.currentLanguage;
-	
+	var Cloud = require("ti.cloud");
+		Cloud.debug = true;
+		
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
 			text:'Settings',
@@ -604,6 +606,28 @@ function settingsForm(_args){
 	
 	settingsTableData.push(row);
 	
+	var row = Ti.UI.createTableViewRow({
+		title:'',
+		hasChild:false
+	});
+	
+	var fieldLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
+	    text: 'Notifications',
+	    left: 15,
+	    height:54
+	}));
+
+	var remindersField = Ti.UI.createSwitch({
+		right: 10,
+		height:54,
+		value:false // mandatory property for iOS 
+	});
+	
+	row.add(fieldLabel);
+	row.add(remindersField);
+	
+	settingsTableData.push(row);
+	
 	var settingsTable = Ti.UI.createTableView({
 		width:Ti.UI.FILL,
 		height:Ti.UI.SIZE,
@@ -646,7 +670,8 @@ function settingsForm(_args){
 				var zipcode = settings.ZIPCODE;
 				var timezone = settings.TIMEZONE;
 				var image = settings.IMAGE;
-
+				var notifications = settings.NOTIFICATIONS;
+				
 				emailField.value = emailaddress;
 				passwordField.value = password;
 				firstNameField.value = firstname;
@@ -658,6 +683,7 @@ function settingsForm(_args){
 				timezoneField.value = timezone;
 				var imageURL = "http://"+domain+"/images/profile/originals/";
 				profileImageView.image = imageURL + image;
+				remindersField.value = notifications;
 				
 				//if(countryField.value.length == 0){
 		    		saveUserLocation();
@@ -713,7 +739,8 @@ function settingsForm(_args){
 		    gender:genderField.value,
 		    dateofbirth: dobField.value,
 			zipcode: zipField.value,
-			image:profileImage
+			image:profileImage,
+			notifications:remindersField.value
 		};
 
 		var xhr = Ti.Network.createHTTPClient({
@@ -931,6 +958,184 @@ function settingsForm(_args){
 	    xhr.open("POST", saveURL);
 		xhr.send(saveData);	
 
+	}
+	
+	//START OF PUSH NOTIFICATIONS
+	function loginUser(){
+		var username = Ti.App.Properties.getString("username");
+		var password = Ti.App.Properties.getString("password");
+
+		Cloud.Users.search({
+		    q: username
+		}, 
+		function (e) {
+		
+		    if (e.success) {
+		
+		        if(e.users.length > 0){
+			        Cloud.Users.login({
+					    login: username,
+					    password: password
+					},
+					function (e) {
+					    if (e.success) {
+					        var user = e.users[0];
+					        subscribeToChannel(1);
+					    }
+			    		else {
+		        			//alert('Error:\n' + ((e.error && e.message) || JSON.stringify(e)));
+		    			}
+					});
+       	 		}
+        		else{
+					Cloud.Users.create({
+					    email:username,
+					    username:username,
+					    first_name:firstNameField.value,
+					    last_name:lastNameField.value,
+					    password: password,
+					    password_confirmation: password
+					},
+					function (e) {
+					    if (e.success) {
+					    	var user = e.users[0];
+					        Cloud.Users.login({
+							    login: username,
+							    password: password
+							}, 
+							function (e) {
+							    if (e.success) {
+							    	var user = e.users[0];
+							        subscribeToChannel(1);
+							    }
+							    else {
+							        //alert('Error:\n' + ((e.error && e.message) || JSON.stringify(e)));
+							    }
+							});
+					    } 
+					    else {
+					        //alert('Error:\n' + ((e.error && e.message) || JSON.stringify(e)));
+					    }
+					});
+        		}
+    		}
+		    else {
+		        //alert('Error:\n' + ((e.error && e.message) || JSON.stringify(e)));
+		    }
+		});
+	}
+
+	function subscribeToChannel(channel){
+		
+		var deviceToken = Ti.App.Properties.getString("deviceToken");
+		
+	    if(channel == 1){
+		    Cloud.PushNotifications.subscribe({
+		        channel: 'General',
+		        device_token: deviceToken,
+		        type: Ti.Platform.name == 'android' ? 'android' : 'ios'
+		    }, 
+		    function (e) {
+		        if (e.success) {
+		            //alert('Subscribed');
+		        }
+		        else {
+		            //alert('Error:\n' + ((e.error && e.message) || JSON.stringify(e)));
+		        }
+		    });
+		}
+	}
+
+	remindersField.addEventListener('change',function(e){
+		if(e.value == true){
+			var deviceToken = null;
+
+			// Check if the device is running iOS 8 or later
+			if (Ti.Platform.name == "iPhone OS" && parseInt(Ti.Platform.version.split(".")[0]) >= 8) {
+			    function registerForPush() {
+			        Ti.Network.registerForPushNotifications({
+			            success: deviceTokenSuccess,
+			            error: deviceTokenError,
+			            callback: receivePush
+			        });
+			        // Remove event listener once registered for push notifications
+			        Ti.App.iOS.removeEventListener('usernotificationsettings', registerForPush); 
+			    };
+			 
+				// Wait for user settings to be registered before registering for push notifications
+			    Ti.App.iOS.addEventListener('usernotificationsettings', registerForPush);
+			 
+			    // Register notification types to use
+			    Ti.App.iOS.registerUserNotificationSettings({
+				    types: [
+			            Ti.App.iOS.USER_NOTIFICATION_TYPE_ALERT,
+			            Ti.App.iOS.USER_NOTIFICATION_TYPE_SOUND,
+			            Ti.App.iOS.USER_NOTIFICATION_TYPE_BADGE
+			        ]
+			    });
+			
+			} else {
+			    // For iOS 7 and earlier
+			    Ti.Network.registerForPushNotifications({
+			        // Specifies which notifications to receive
+			        types: [
+			            Ti.Network.NOTIFICATION_TYPE_BADGE,
+			            Ti.Network.NOTIFICATION_TYPE_ALERT,
+			            Ti.Network.NOTIFICATION_TYPE_SOUND
+			        ],
+			        success: deviceTokenSuccess,
+			        error: deviceTokenError,
+			        callback: receivePush
+			    });
+			}
+			
+			// Process incoming push notifications
+			function receivePush(e) {
+			    //alert('Received push: ' + JSON.stringify(e));
+			}
+			// Save the device token for subsequent API calls
+			function deviceTokenSuccess(e) {
+				//alert(e.deviceToken);
+			    deviceToken = e.deviceToken;
+			    Ti.App.Properties.setString("deviceToken",deviceToken);
+			    loginUser();
+			    updateToken(deviceToken);
+			}
+			
+			function deviceTokenError(e) {
+			    //alert('Failed to register for push notifications! ' + e.error);
+			}
+		}
+		
+		else{
+			Ti.Network.unregisterForPushNotifications();
+		}
+	
+	});
+	
+	function updateToken(deviceToken){
+		var userid = Ti.App.Properties.getString('userid');
+		var saveURL = "http://"+domain+"/model/mobile/services/users.cfc?method=userSaveDeviceToken";
+		var saveData = {
+			userid: userid,
+		    deviceToken:deviceToken
+		};
+
+		var xhr = Ti.Network.createHTTPClient({
+	    	onload: function() {
+	    		var json = JSON.parse(this.responseText);
+	    	},
+	    	onerror: function(e) {
+	    		Ti.API.info("STATUS: " + this.status);
+		    	Ti.API.info("TEXT:   " + this.responseText);
+		    	Ti.API.info("ERROR:  " + e.error);
+		    	alert(L('error_retrieving_data'));
+	    	},
+		    timeout:5000
+	   	});
+
+	    xhr.open("POST", saveURL);
+		xhr.send(saveData);
 	}
 	
 	function resetLocationInfo (country){

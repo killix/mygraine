@@ -66,7 +66,7 @@
 			height:54,
 			layout:'vertical',
 			font:{
-				fontSize:14,
+				fontSize:16,
 				fontFamily:'Source Sans Pro'
 			},
 			top:8

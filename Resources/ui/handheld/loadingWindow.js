@@ -8,10 +8,9 @@ function loadingWindow(_args){
 		opacity:0
 	}),
 	loadingView = Ti.UI.createView({
-		borderRadius    : 10,
+		borderRadius:2,
 		backgroundColor:'#000',
-		opacity:0.8,
-		borderRadius:8
+		opacity:0.8
 	}),
 	loadingActivityIndicator = Ti.UI.createActivityIndicator({
 		style  : Ti.UI.iPhone.ActivityIndicatorStyle.BIG,

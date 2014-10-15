@@ -11,7 +11,8 @@ function loginWindow() {
 	var self = Ti.UI.createWindow({
 		fullscreen:true,
 		navBarHidden:true,
-		backgroundColor:'#00BFFF'
+		backgroundColor:'transparent',
+		backgroundImage:'/images/back.png'
 	});
 
 	function logMemberIn() {
@@ -125,12 +126,16 @@ function loginWindow() {
 		height:108
 	});
 	
-	var logoImageView = Ti.UI.createImageView({
-		image:'/images/logo.png',
-		width:Ti.UI.FILL
+	var logoLabel = Ti.UI.createLabel({
+		text:'Byegraine',
+		color:'#FFF',
+		font:{
+			fontFamily:'Snippet',
+			fontSize:48
+		}
 	});
 	
-	row.add(logoImageView);
+	row.add(logoLabel);
 	
 	loginTableData.push(row);
 	
@@ -170,7 +175,8 @@ function loginWindow() {
 	    height:54,
 	    autocorrect:false,
 	    bubbleParent: false,
-	    returnKeyType:Ti.UI.RETURNKEY_DONE
+	    returnKeyType:Ti.UI.RETURNKEY_DONE,
+	    backgroundColor:'#FFF'
 	}));
 	
 	row.add(emailField);
@@ -200,35 +206,13 @@ function loginWindow() {
 	
 	loginTableData.push(row);
 	
-	var row = Ti.UI.createTableViewRow({
-		title:'',
-		backgroundColor:'#FFF'
-	});
-	
-	var loginButton = Ti.UI.createButton(ef.combine($$.button,{
-		title:'Login',
-		backgroundColor:'#FFF',
-		borderColor:'#FFF',
-		width:Ti.UI.FILL,
-		color:'#00BFFF'
-	}));
-				
-	loginButton.addEventListener('click', function() {
-		logMemberIn();
-	});
-	
-	row.add(loginButton);
-	
-	loginTableData.push(row);
-	
 	var loginTable = Ti.UI.createTableView({
 		width:Ti.UI.FILL,
 		height:Ti.UI.SIZE,
 		data:loginTableData,
-   		top:124,
-		right:4,
-		left:4,
-		bottom:4,
+   		top:116,
+		right:8,
+		left:8,
 		borderWidth:1,
 		borderColor:'#FFF',
 		borderRadius:2,
@@ -247,6 +231,46 @@ function loginWindow() {
 		backgroundColor:'transparent'
 	});
 	
+	var loginButton = Ti.UI.createButton(ef.combine($$.button,{
+		title:'Login',
+		backgroundColor:'#22746B',
+		borderColor:'#22746B',
+		width:Ti.UI.FILL,
+		height:54,
+		color:'#FFF'
+	}));
+				
+	loginButton.addEventListener('click', function() {
+		logMemberIn();
+	});
+	
+	row.add(loginButton);
+	
+	loginTableData.push(row);
+	
+	var loginTable = Ti.UI.createTableView({
+		width:Ti.UI.FILL,
+		height:Ti.UI.SIZE,
+		data:loginTableData,
+   		top:226,
+		right:8,
+		left:8,
+		selectionStyle:'NONE',
+		backgroundColor: 'transparent',
+		editable:true,
+		scrollable:false
+	});
+	
+	self.add(loginTable);
+	
+	var loginTableData = [];
+	
+	var row = Ti.UI.createTableViewRow({
+		title:'',
+		backgroundColor:'transparent',
+		width:Ti.UI.FILL
+	});
+	
 	Ti.Facebook=Titanium.Facebook = require('facebook');
     Ti.Facebook.appid = '763148417059882';
     Ti.Facebook.permissions = ['publish_stream','email','user_about_me'];
@@ -257,7 +281,9 @@ function loginWindow() {
 		backgroundColor:'#3b5998',
 		borderColor:'#3b5998',
 		width:Ti.UI.FILL,
-		color:'#FFF'
+		height:54,
+		color:'#FFF',
+		right:4
 	}));
 	
     facebookButton.addEventListener('click', function() {
@@ -309,55 +335,58 @@ function loginWindow() {
     	Ti.Facebook.authorize();
     });
 	
-	row.add(facebookButton);
-	
-	loginTableData.push(row);
-	
-	var row = Ti.UI.createTableViewRow({
-		title:'',
-		backgroundColor:'transparent'
+	var buttonView = Ti.UI.createView({
+		width:'50%',
+		height:Ti.UI.SIZE,
+		left:0
 	});
+	
+	buttonView.add(facebookButton);
+	row.add(buttonView);
 	
 	var registerButton = Ti.UI.createButton(ef.combine($$.button,{
 		title:'Sign up with email',
 		backgroundColor:'#22746B',
 		borderColor:'#22746B',
 		width:Ti.UI.FILL,
-		color:'#FFF'
+		height:54,
+		color:'#FFF',
+		left:4
 	}));
 				
 	registerButton.addEventListener('click', function() {
 		registerNewMember();
 	});
 	
-	row.add(registerButton);
-	
-	loginTableData.push(row);
-	
-	var row = Ti.UI.createTableViewRow({
-		title:'',
-		backgroundColor:'transparent'
+	var buttonView = Ti.UI.createView({
+		width:'50%',
+		right:0
 	});
+	
+	buttonView.add(registerButton);
+	row.add(buttonView);
 	
 	var passwordHelpButton = Ti.UI.createButton(ef.combine($$.textbutton,{
 		title:'Forgot Password',
 		width:Ti.UI.FILL,
 		color:'#FFF'
 	}));
-				
+	
 	passwordHelpButton.addEventListener('click', function() {
 		showPasswordHelp();
 	});
 	
-	row.add(passwordHelpButton);
+	//buttonView.add(passwordHelpButton);
 	
-	//loginTableData.push(row);
+	loginTableData.push(row);
 	
 	var loginTable = Ti.UI.createTableView({
-		width:'75%',
+		width:Ti.UI.FILL,
 		height:Ti.UI.SIZE,
 		data:loginTableData,
-		bottom:4,
+		left:8,
+		right:8,
+		bottom:8,
 		borderWidth:0,
 		borderRadius:2,
 		selectionStyle:'NONE',

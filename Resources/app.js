@@ -19,6 +19,8 @@ var ef = {};
 
 Ti.App.Properties.setString("userid","0");
 Ti.App.Properties.setString("domain","www.sportsuniformsunlimited.com/Mygraine");
+Ti.App.forceSplashAsSnapshot = true;
+
 // This is a single context application with mutliple windows in a stack
 (function() {
 

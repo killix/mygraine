@@ -138,6 +138,8 @@ function alertsWindow(_args){
 	
 	self.addEventListener('open',function(e){
 		loadAlerts();
+		
+		Titanium.UI.iPhone.setAppBadge(0);
 	});
 	
 	return self;

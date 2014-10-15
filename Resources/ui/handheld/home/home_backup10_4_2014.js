@@ -13,16 +13,10 @@ function homeForm(_args){
 	var medicationsCountLabel;
 	var parentObject = this;
 	var loaded = 0;
-	var TiCircularProgress = require('de.marcelpociot.circularprogress');
-	var HealthKitModule = require('health.kit');
-	var data1 = [];
-	var data2 = [];
-	var data3 = [];
-	var data4 = [];
-		
+	
 	var self = Ti.UI.createWindow(ef.combine($$.tabWindow,{
 		titleControl:Ti.UI.createLabel({
-			text:'Byegraine',
+			text:'Mygraine',
 			color:'#FFF',
 			font:{
 				fontFamily:'Snippet',
@@ -32,20 +26,9 @@ function homeForm(_args){
 		fullscreen:false,
 		navBarHidden:false,
 		tintColor:'#FFF',
-		backgroundColor:'#d7d6d5',
-		layout:'vertical'
+		backgroundColor:'#d7d6d5'
 	}));
 	
-	var scrollView = Ti.UI.createScrollView({
-		contentWidth: 'auto',
-  		contentHeight: 'auto',
-  		showVerticalScrollIndicator: true,
-  		showHorizontalScrollIndicator: false,
-  		height: '100%',
-  		width: '100%',
-  		layout:'vertical'
-	});
-
 	function getDateFormatted(days){
 		
 		var dateToday = new Date();
@@ -111,7 +94,7 @@ function homeForm(_args){
 	
 	var profileRow = Ti.UI.createTableViewRow({
 		width:Ti.UI.FILL,
-		height:142,
+		height:152,
 		title:'',
 		top:4,
 		backgroundColor:'transparent'
@@ -119,7 +102,7 @@ function homeForm(_args){
 	
 	var topView = Ti.UI.createView({
 		width:Ti.UI.FILL,
-		height:28,
+		height:32,
 		top:0,
 		layout:'vertical',
 		backgroundColor:'transparent'
@@ -174,9 +157,9 @@ function homeForm(_args){
 	profileRow.add(bottomView);
 	
 	var photoContainerView = Ti.UI.createView({
-		width:94,
-		height:94,
-		borderRadius:45,
+		width:104,
+		height:104,
+		borderRadius:52,
 		left:4,
 		top:4,
 		bottom:4,
@@ -200,7 +183,7 @@ function homeForm(_args){
 	
 	var photoImageView = Ti.UI.createImageView({
 		width:Ti.UI.SIZE,
-		height:124,
+		height:140,
 		backgroundColor:'transparent',
 		image:''
 	});
@@ -211,11 +194,11 @@ function homeForm(_args){
 
 	var profileInfoView = Ti.UI.createView({
 		width:Ti.UI.FILL,
-		height:142,
+		height:160,
 		top:4,
 		bottom:4,
 		right:4,
-		left:-6,
+		left:-10,
 		layout:'vertical'
 	});
 	
@@ -278,7 +261,7 @@ function homeForm(_args){
 		width:Ti.UI.SIZE,
 		height:Ti.UI.SIZE,
 		left:10,
-		top:2,
+		top:6,
 		layout:'horizontal'
 	});
 	
@@ -323,7 +306,7 @@ function homeForm(_args){
 		width:Ti.UI.SIZE,
 		height:Ti.UI.SIZE,
 		left:0,
-		top:2,
+		top:6,
 		layout:'horizontal'
 	});
 	
@@ -437,7 +420,7 @@ function homeForm(_args){
    		backgroundColor: 'transparent'
 	});
 	
-	scrollView.add(calendarTable);
+	self.add(calendarTable);
 	
 	function blankRow(){
 		var row = Ti.UI.createTableViewRow({
@@ -456,24 +439,17 @@ function homeForm(_args){
 	}
 
     var iPhoneDevice = Titanium.Platform.displayCaps.platformHeight;
-	//var recentHistoryTableHeight = Ti.Platform.displayCaps.platformHeight - 422;
-	var recentHistoryTableHeight = (Ti.Platform.displayCaps.platformWidth*0.333);
+	var recentHistoryTableHeight = Ti.Platform.displayCaps.platformHeight - 422;
 	if(iPhoneDevice < 577){
-		var mainTableHeight = recentHistoryTableHeight*1+4;
 		var howManyRowsWidth = 0.50;
 	}
 	else{
-		var mainTableHeight = recentHistoryTableHeight*2+4;
-		var howManyRowsWidth = 0.50;
+		var howManyRowsWidth = 0.333;
 	}
 	
 	function populateRecentHistory(json){
 		recentHistoryTableData = [];
 		var migraineCount = 0;
-		data1 = [];
-		data2 = [];
-		data3 = [];
-		data4 = [];
 		
 		if(json.MIGRAINE.length == 0){
 			recentHistoryTableData.push(blankRow());
@@ -487,7 +463,7 @@ function homeForm(_args){
 			
 				var weekRow = Ti.UI.createTableViewRow({
 					width:'100%',
-					height:recentHistoryTableHeight,
+					height:recentHistoryTableHeight*howManyRowsWidth,
 					title:'',
 					layout:'horizontal'
 				});
@@ -497,7 +473,7 @@ function homeForm(_args){
 				var leftVar = 4;
 				var rightVar = 2;
 			}
-			else if(migraineCount==3){
+			else if(migraineCount==4){
 				var leftVar = 2;
 				var rightVar = 4;
 			}
@@ -507,14 +483,14 @@ function homeForm(_args){
 			}
 			
 			var outerDayColumn = Ti.UI.createView({
-				width:Ti.Platform.displayCaps.platformWidth*0.333,
-				height:recentHistoryTableHeight,
+				width:Ti.Platform.displayCaps.platformWidth*0.25,
+				height:Ti.UI.FILL,
 				migraineid:migraine.MIGRAINEID
 			});
 			
 			var dayColumn = Ti.UI.createView({
-				//width:Ti.Platform.displayCaps.platformWidth*0.333,
-				height:recentHistoryTableHeight-4,
+				//width:Math.round(Ti.Platform.displayCaps.platformWidth*.2229),
+				height:Ti.UI.FILL,
 				right:rightVar,
 				top:4,
 				left:leftVar,
@@ -531,33 +507,32 @@ function homeForm(_args){
 				height:Ti.UI.FILL,
 				backgroundColor:'transparent',
 				layout:'vertical',
-				migraineid:migraine.MIGRAINEID,
-				top:(recentHistoryTableHeight/3)
+				migraineid:migraine.MIGRAINEID
 			});
 			
 			if(migraine.SEVERITY==1){
-				var circleColor = '#0F0';
+				var circleColor1 = '#0F0';
 				var circleColor2 = '#d7d6d5';
 				var circleColor3 = '#d7d6d5';
 				var circleColor4 = '#d7d6d5';
 			}
 			else if(migraine.SEVERITY==2){
 				var circleColor1 = '#d7d6d5';
-				var circleColor = '#FF0';
+				var circleColor2 = '#FF0';
 				var circleColor3 = '#d7d6d5';
 				var circleColor4 = '#d7d6d5';
 			}
 			else if(migraine.SEVERITY==3){
 				var circleColor1 = '#d7d6d5';
 				var circleColor2 = '#d7d6d5';
-				var circleColor = '#FF8300';
+				var circleColor3 = '#FF8300';
 				var circleColor4 = '#d7d6d5';
 			}
 			else{
 				var circleColor1 = '#d7d6d5';
 				var circleColor2 = '#d7d6d5';
 				var circleColor3 = '#d7d6d5';
-				var circleColor = '#F00';
+				var circleColor4 = '#F00';
 			}
 			
 			var redOverlay = Ti.UI.createView({
@@ -608,7 +583,7 @@ function homeForm(_args){
 			});
 			
 			//dayColumn.add(redOverlay);
-			//dayColumn.add(labelView);
+			dayColumn.add(labelView);
 			labelView.add(dayString);
 			labelView.add(dayNumber);
 			
@@ -667,83 +642,9 @@ function homeForm(_args){
 			circlesView.add(circleView2);
 			circlesView.add(circleView3);
 			circlesView.add(circleView4);
-			//labelView.add(circlesView);
+			labelView.add(circlesView);
 			
 			//labelView.add(dayMonth);
-			
-			var progressSize = recentHistoryTableHeight-12;
-			
-			var progressView = TiCircularProgress.createProgressView({
-			    height: progressSize,
-			    width: progressSize,
-			    roundedCorners: true,
-			    progress: 0,
-			    progressTintColor: circleColor,
-			    trackTintColor: '#CCC',
-			    animatedProgress: true,
-			    thicknessRatio: 0.22
-			});
-			
-			data1.push(progressView);
-			data2.push(migraine.SEVERITY*0.25);
-			
-			var progressViewInner = TiCircularProgress.createProgressView({
-			    height: progressSize*0.75,
-			    width: progressSize*0.75,
-			    roundedCorners: true,
-			    progress: 0,
-			    progressTintColor: '#4ee4dc',
-			    trackTintColor: '#4ee4dc',
-			    animatedProgress: true,
-			    thicknessRatio: 0.30
-			});
-			
-			data3.push(progressViewInner);
-			data4.push(migraine.DURATION);
-			
-			var textContainerView = Ti.UI.createView({
-				width:progressSize/2,
-				height:progressSize,
-				backgroundColor:'transparent',
-				left:0,
-				layout:'vertical'
-			});
-			
-			var testlabel = Ti.UI.createLabel({
-				text:'PAIN',
-				right:-8,
-				font:{
-					fontSize:12,
-					fontFamily:fontFamilyVar
-				},
-				color:'black',
-				height:10,
-				shadowColor: '#FFF',
-				shadowOffset: {x:1, y:1},
- 				shadowRadius: 1
-			});
-			
-			textContainerView.add(testlabel);
-			
-			var testlabel = Ti.UI.createLabel({
-				text:'TIME',
-				right:-8,
-				font:{
-					fontSize:12,
-					fontFamily:fontFamilyVar
-				},
-				color:'black',
-				shadowColor: '#FFF',
-				shadowOffset: {x:1, y:1},
- 				shadowRadius: 1
-			});
-			
-			textContainerView.add(testlabel);
-
-			dayColumn.add(progressView);
-			dayColumn.add(progressViewInner);
-			dayColumn.add(textContainerView);
-			dayColumn.add(labelView);
 			
 			weekRow.add(outerDayColumn);
 			
@@ -753,7 +654,7 @@ function homeForm(_args){
 				self.containingTab.open(callEditMigraineWindow);
 			});
 			
-			if(migraineCount == 3 || migraineCount == json.MIGRAINE.length){
+			if(migraineCount == 4 || migraineCount == json.MIGRAINE.length){
 				recentHistoryTableData.push(weekRow);
 				migraineCount = 0;
 			}
@@ -763,8 +664,8 @@ function homeForm(_args){
 	
 	var recentHistoryTable = Ti.UI.createTableView({
 		width:Ti.UI.FILL,
-		height:mainTableHeight,
-		top:0,
+		height:recentHistoryTableHeight,
+		top:194,
 		data:recentHistoryTableData,
 		selectionStyle:'NONE',
 		separatorStyle: Titanium.UI.iPhone.TableViewSeparatorStyle.NONE,
@@ -778,7 +679,7 @@ function homeForm(_args){
    		backgroundColor: 'transparent'
 	});
 	
-	scrollView.add(recentHistoryTable);
+	self.add(recentHistoryTable);
 	
 	var linkRow = Ti.UI.createTableViewRow({
 		width:Ti.UI.FILL,
@@ -893,9 +794,7 @@ function homeForm(_args){
    		backgroundColor: 'transparent'
 	});
 	
-	scrollView.add(linksTable);
-	
-	self.add(scrollView);
+	self.add(linksTable);
 	
 	function loadHomeScreen(){
 		var loadURL = "http://"+domain+"/model/mobile/services/migraines.cfc?method=getHomeMigraines";
@@ -943,16 +842,6 @@ function homeForm(_args){
 				}
 				
 				callLoadingWindow.close();
-				
-				for (i = 0; i < data1.length; i++) {
-					data1[i].progress = data2[i];
-					if(data4[i] > 12){
-						data3[i].progress = (data4[i]-12)*0.0833333333;
-					}
-					else{
-						data3[i].progress = data4[i]*0.0833333333;
-					}
-				}
 			},
 	    	onerror: function(e) {
 	    		Ti.API.info("STATUS: " + this.status);
@@ -988,15 +877,6 @@ function homeForm(_args){
 	
 	self.addEventListener('open',function(e){
 		loadHomeScreen();
-		
-		HealthKitModule.loadHealthKitData({
-			success:function(e){
-				alert(e);
-			},
-			cancel:function(e){
-				alert(e);
-			}
-		});
 	});
 	
 	this.loadHistory = function(){

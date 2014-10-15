@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ti:app xmlns:ti="http://ti.appcelerator.org">
+    <property name="acs-oauth-secret-development" type="string">ivmvSSDAmlqDxtEQKlRD76oV1Z3W3chR</property>
+    <property name="acs-oauth-key-development" type="string">FD1S54lFK50UGOpiVgcmMU0cJP0K1YWt</property>
+    <property name="acs-api-key-development" type="string">3SlkuSXqPWCkYzFpyY563W1eJqUOyjJ1</property>
     <modules>
+        <module platform="iphone" version="1.0">de.marcelpociot.circularprogress</module>
         <module platform="commonjs">ti.cloud</module>
         <module platform="android">facebook</module>
+        <module platform="iphone" version="1.0.0">health.kit</module>
         <module platform="iphone">facebook</module>
     </modules>
     <id>com.mygraine.v1</id>
-    <name>Mygraine</name>
+    <name>Byegraine</name>
     <version>1.0</version>
-    <publisher>Mygraine</publisher>
-    <url>http://www.mygraineapp.com</url>
-    <description>Mygraine</description>
-    <copyright>2014 by Mygraine</copyright>
+    <publisher>Byegraine</publisher>
+    <url>http://www.byegraineapp.com</url>
+    <description>Byegraine</description>
+    <copyright>2014 by Byegraine</copyright>
     <icon>appicon.png</icon>
     <fullscreen>false</fullscreen>
     <navbar-hidden>false</navbar-hidden>

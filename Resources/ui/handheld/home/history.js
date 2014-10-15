@@ -547,7 +547,7 @@ function historyWindow(_args){
 		});
 		
 		var migraineLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
-		    text: 'You have no migraines at this time!',
+		    text: 'No migraines tracked yet!',
 		    height:54
 		}));
 		
@@ -611,6 +611,10 @@ function historyWindow(_args){
 		});
 		
 		scrollView.add(migraineChart1);
+		
+		migraineChart1.addEventListener('load', function(){
+		    Ti.API.info('loaded');
+		});
 		
 		var webViewURL = "http://"+domain+"/model/mobile/migraineChart2.cfm?userid="+userid+"&chartNumber="+chartNumber+"&chartUnit="+chartUnit;
 		var migraineChart2 = Ti.UI.createWebView({

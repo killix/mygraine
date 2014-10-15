@@ -441,16 +441,42 @@ function homeForm(_args){
 	
 	function blankRow(){
 		var row = Ti.UI.createTableViewRow({
+			width:Ti.UI.FILL,
+			height:54,
 			title:'',
-			hasChild:false
+			top:0,
+			left:0,
+			hasChild:false,
+			backgroundColor:'transparent'
+		});
+		
+		var blankView = Ti.UI.createView({
+			width:Ti.UI.FILL,
+			height:54,
+			backgroundColor:'#FFF',
+			borderWidth:1,
+			borderColor:'#CCC',
+			borderRadius:2,
+			bottom:4,
+			right:4,
+			left:4
 		});
 		
 		var migraineLabel = Titanium.UI.createLabel(ef.combine($$.settingsLabel,{
-		    text: 'You have no migraines at this time!',
-		    height:54
+		    text: 'No migraines tracked yet!',
+		    width:Ti.UI.SIZE,
+		    textAlign:Ti.UI.TEXT_ALIGNMENT_CENTER,
+			height:54,
+			color:'#000',
+			font:{
+				fontSize:fontSizeVar,
+		    	fontFamily:fontFamilyVar
+		    }
 		}));
 		
-		row.add(migraineLabel);
+		blankView.add(migraineLabel);
+		
+		row.add(blankView);
 		
 		return row;
 	}
@@ -763,7 +789,7 @@ function homeForm(_args){
 	
 	var recentHistoryTable = Ti.UI.createTableView({
 		width:Ti.UI.FILL,
-		height:mainTableHeight,
+		height:Ti.UI.SIZE,
 		top:0,
 		data:recentHistoryTableData,
 		selectionStyle:'NONE',
@@ -877,6 +903,7 @@ function homeForm(_args){
 	var linksTable = Ti.UI.createTableView({
 		width:Ti.UI.FILL,
 		height:Ti.UI.SIZE,
+		top:4,
 		bottom:4,
 		right:4,
 		left:4,
@@ -986,7 +1013,7 @@ function homeForm(_args){
 		loadHomeScreen();
 	});
 	
-	self.addEventListener('open',function(e){
+	self.addEventListener('postlayout',function(e){
 		loadHomeScreen();
 		
 		HealthKitModule.loadHealthKitData({
